@@ -1,38 +1,61 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Alegreya&family=Josefin+Sans&family=Roboto&display=swap');
+/*
+    font-family: 'Alegreya', serif;
+    font-family: 'Josefin Sans', sans-serif;
+    font-family: 'Roboto', sans-serif;
+ */
+
+body {
+    background:#313638;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.navbar {
+    width:100%;
+    height:6vh;
+    display:flex;
+    flex-direction:row;
+    justify-content:space-evenly;
+    align-items: center;
+
+    color:#FFFFFF;
+    background:#555555;
+    font-family: 'Josefin Sans', sans-serif;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.navbar-logo {
+    display:flex;
+    align-items: center;
+    flex-direction:row;
+    justify-content:space-evenly;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.navbar-logo img{
+    width:2.5vh;
+    height:2.5vh;
 }
 
-.App-link {
-  color: #61dafb;
+.navbar-logo div{
+    padding:1vh;
+    font-size:2.5vh;
+    font-weight:bold;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.navbar-search{
+    width:60%;
+    padding:8px 15px;
+    color:#ffffff;
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-sizing: border-box;
+    border-radius: 7px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.navbar-upload {
+    width:2.5vh;
+    height:2.5vh;
+}
+
+.navbar-profile {
+    width:10%;
 }

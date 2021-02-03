@@ -2,9 +2,8 @@
   "name": "Pallas",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "app.js"
   },
   "repository": {
     "type": "git",
@@ -16,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/edward-dunton/Pallas/issues"
   },
-  "homepage": "https://github.com/edward-dunton/Pallas#readme"
+  "homepage": "https://github.com/edward-dunton/Pallas#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }

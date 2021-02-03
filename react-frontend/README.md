@@ -1,6 +1,6 @@
 # After cloning:
 
-Make sure you type npm i to install the required scripts.
+Make sure you type `npm i` to install the required scripts.
 
 ## Available Scripts
 

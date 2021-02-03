@@ -1,0 +1,20 @@
+{
+  "name": "Pallas",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/edward-dunton/Pallas.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "GNU",
+  "bugs": {
+    "url": "https://github.com/edward-dunton/Pallas/issues"
+  },
+  "homepage": "https://github.com/edward-dunton/Pallas#readme"
+}

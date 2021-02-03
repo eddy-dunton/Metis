@@ -1,3 +1,7 @@
+# After cloning:
+
+Make sure you type npm i to install the required scripts.
+
 ## Available Scripts
 
 In the project directory, you can run:

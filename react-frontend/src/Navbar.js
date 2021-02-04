@@ -2,6 +2,9 @@ import React from 'react';
 import logo from './images/logo.svg';
 import upload from './images/upload.svg';
 import search from './images/search.svg';
+
+import { Link } from 'react-router-dom'
+
 import './App.css';
 
 class Navbar extends React.Component {
@@ -20,9 +23,7 @@ class Navbar extends React.Component {
     }
     async getProfileInfo() {
         if (this.state.loggedIn){
-            //const url = "/getPreviewUserInfo";
-            //const reqdata = {username:this.state.username}
-            //const response = await fetch(url);
+            //const response = await fetch("/getPreviewUserInfo", {username:this.state.username});
             //const resdata = await response.json();
             const resdata = { 
                 "picture": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.watsonmartin.com%2Fwp-content%2Fuploads%2F2016%2F03%2Fdefault-profile-picture.jpg",
@@ -40,10 +41,10 @@ class Navbar extends React.Component {
     render() {
         return (
             <div className="navbar">
-                <div href={"/"} className="navbar-logo clickable">
+                <Link to="/" className="navbar-logo clickable">
                     <img src={logo} alt="Pallas Logo" />
                     <div>pallas</div>
-                </div>
+                </Link>
                 <div className="navbar-search">
                     <img src={search} alt="Upload button" />
                     <input  placeholder="Finite automata to regular expressions"/>

@@ -44,6 +44,8 @@ body {
     align-items: center;
     flex-direction:row;
     justify-content:space-evenly;
+    text-decoration:none;
+    color:#ffffff;
 }
 
 .navbar-logo img{

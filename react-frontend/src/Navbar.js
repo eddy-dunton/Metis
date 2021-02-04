@@ -22,10 +22,10 @@ class Navbar extends React.Component {
         const response = await fetch(url);
         const resdata = await response.json();*/
         const resdata = { 
-            picture: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.watsonmartin.com%2Fwp-content%2Fuploads%2F2016%2F03%2Fdefault-profile-picture.jpg",
-            uni: "University of Bath",
-            username:"John Smith",
-            pens: 257,
+            "picture": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.watsonmartin.com%2Fwp-content%2Fuploads%2F2016%2F03%2Fdefault-profile-picture.jpg",
+            "uni": "University of Bath",
+            "username":"John Smith",
+            "pens": 257
         } 
         this.setState({ profile: resdata })
         this.setState({ loading: false })

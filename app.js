@@ -1,12 +1,16 @@
 const express = require('express');
+const sqlite3 = require('sqlite3').verbose();
+
+console.log("Connecting to db");
+const db = sqlite3.cached.Database("pallas.db");
+console.log("Connected to db!")
+
 const app = express();
 
-app.get('/', (req, res) => {
-  res.send("HelloWorld");
-});
+app.use(express.static("react-frontend/build"));
 
-app.get('/test', (req, res) => {
-  res.send("toast");
-});
+//app.post('/createUser', async (req, res) => {
+  
+//});
 
 app.listen(3000, () => console.log("Listening"));

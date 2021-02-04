@@ -1,38 +1,171 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Alegreya&family=Josefin+Sans&family=Roboto&display=swap');
+/*
+font-family: 'Alegreya', serif;
+font-family: 'Josefin Sans', sans-serif;
+font-family: 'Roboto', sans-serif;
+ */
+
+.clickable{
+    cursor:pointer;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+    supported by Chrome, Edge, Opera and Firefox */
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+    background:#313638;
+    margin:0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.navbar {
+    height:80px;
+    display:flex;
+    flex-direction:row;
+    justify-content:space-evenly;
+    align-items: center;
+
+    color:#FFFFFF;
+    background:#555555;
+    font-family: 'Josefin Sans', sans-serif;
+
+    padding:0 15px; /* this */
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.navbar > * {
+
+    margin:0 15px;  /* and that, will result in a 10px gap */
+}
+.navbar-logo {
+    display:flex;
+    align-items: center;
+    flex-direction:row;
+    justify-content:space-evenly;
+    text-decoration:none;
+    color:#ffffff;
 }
 
-.App-link {
-  color: #61dafb;
+.navbar-logo img{
+    width:30px;
+    height:30px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.navbar-logo div{
+    padding:0px 15px;
+    font-size:35px;
+    font-weight:600;
+}
+
+.navbar-search{
+    flex-grow:2;
+    max-width:60%;
+    height:45px;
+    display:flex;
+    flex-direction:row;
+    justify-content:space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-sizing: border-box;
+    border-radius: 7px;
+}
+
+.navbar-search input{
+    height:100%;
+    flex-grow:2;
+    color:#ffffff;
+    background:none;
+    border:none;
+
+    font-size:24px;
+
+    font-family: 'Roboto', sans-serif;
+}
+.navbar-search input::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: rgba(255,255,255,0.2);
+    opacity: 1; /* Firefox */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.navbar-search img{
+    padding:15px;
+    width:25px;
+    height:25px;
+}
+
+.navbar-upload {
+    width:30px;
+    height:30px;
+}
+
+.navbar-profile {
+    display:flex;
+    flex-direction:row;
+    justify-content:space-evenly;
+    align-items: center;
+}
+
+.navbar-profile img {
+    width:50px;
+    height:50px;
+    border-radius: 100%;
+    margin:5px;
+}
+.navbar-profile-content{
+    font-size:12px;
+    font-weight:600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.navbar-profile-name {
+    font-size:20px;
+}
+
+.navbar-profile-name:after {
+    content: '';
+    position:absolute;
+    margin-left:5px;
+    margin-top:7px;
+    border-top: 10px solid #eeeeee;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+}
+.navbar-profile-pens {
+    color:#AAAAAA;
+}
+
+@media screen and (max-width: 800px) {
+    .navbar {
+        flex-wrap: wrap;
+        height:120px;
+        padding:0 5px; /* this */
+    }
+
+    .navbar > * {
+        margin:0 0px;  /* and that, will result in a 10px gap */
+    }
+    .navbar-logo{
+        order:2;
+    }
+    .navbar-upload{
+        order:1;
+    }
+    .navbar-profile{
+        order:3;
+    }
+    .navbar-profile-content {
+        display:none;
+    }
+    .navbar-search{
+        width:95%;
+        max-width:100%;
+        order:4;
+    }
 }

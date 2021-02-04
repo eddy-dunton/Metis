@@ -7,18 +7,10 @@ console.log("Connected to db!")
 
 const app = express();
 
-app.get('/', async (req, res) => {
-  db.get("SELECT * FROM Test WHERE test = 1;", (err, row) => {
-    console.log(row);
-    res.send(row);
-  });
-});
+app.use(express.static("react-frontend/build"));
 
-app.get('/test', (req, res) => {
-  db.get("SELECT * FROM Test WHERE test = 2;", (err, row) => {
-    console.log(row);
-    res.send(row);
-  });
-});
+//app.post('/createUser', async (req, res) => {
+  
+//});
 
 app.listen(3000, () => console.log("Listening"));

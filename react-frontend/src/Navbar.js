@@ -10,34 +10,37 @@ class Navbar extends React.Component {
         this.state = {
             loading: true,
             profile: null,
+            username:props.username,
+            loggedIn:props.loggedIn,
         };
 
+        this.loginCallback = props.loginCallback;
+        this.uploadCallback = props.uploadCallback;
         this.getProfileInfo = this.getProfileInfo.bind(this);
     }
-
     async getProfileInfo() {
-        /*
-        const url = "/getPreviewUserInfo";
-        const reqdata = {username:username}
-        const response = await fetch(url);
-        const resdata = await response.json();*/
-        const resdata = { 
-            "picture": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.watsonmartin.com%2Fwp-content%2Fuploads%2F2016%2F03%2Fdefault-profile-picture.jpg",
-            "uni": "University of Bath",
-            "username":"John Smith",
-            "pens": 257
-        } 
-        this.setState({ profile: resdata })
-        this.setState({ loading: false })
+        if (this.state.loggedIn){
+            //const url = "/getPreviewUserInfo";
+            //const reqdata = {username:this.state.username}
+            //const response = await fetch(url);
+            //const resdata = await response.json();
+            const resdata = { 
+                "picture": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.watsonmartin.com%2Fwp-content%2Fuploads%2F2016%2F03%2Fdefault-profile-picture.jpg",
+                "uni": "University of Bath",
+                "username":"John Smith",
+                "pens": 257
+            } 
+            this.setState({ profile: resdata })
+            this.setState({ loading: false })
+        }
     }
     componentDidMount() {
         this.getProfileInfo()
-        console.log(this.state)
     }
     render() {
         return (
             <div className="navbar">
-                <div className="navbar-logo">
+                <div href={"/"} className="navbar-logo clickable">
                     <img src={logo} alt="Pallas Logo" />
                     <div>pallas</div>
                 </div>
@@ -45,10 +48,10 @@ class Navbar extends React.Component {
                     <img src={search} alt="Upload button" />
                     <input  placeholder="Finite automata to regular expressions"/>
                 </div>
-                <div className="navbar-upload">
-                    <img src={upload} alt="Upload button" />
+                <div className="navbar-upload clickable" onClick={this.uploadCallback}>
+                    <img src={upload} alt="Upload button"/>
                 </div>
-                { this.state.loading || !this.state.profile ? 
+                {this.state.loggedIn ? this.state.loading || !this.state.profile ? 
                         (
                             <div className="navbar-profile">Loading...</div>
                         ) : (
@@ -61,7 +64,9 @@ class Navbar extends React.Component {
                                 </div>
                             </div>
 
-                        )}
+                        ) : (
+                <div className="navbar-profile" onClick={this.loginCallback}>Sign In</div>
+                )}
             </div>
         );
     }

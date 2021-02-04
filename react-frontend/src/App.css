@@ -5,8 +5,20 @@ font-family: 'Josefin Sans', sans-serif;
 font-family: 'Roboto', sans-serif;
  */
 
+.clickable{
+    cursor:pointer;
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
 body {
     background:#313638;
+    margin:0;
 }
 
 .navbar {
@@ -27,7 +39,6 @@ body {
 
     margin:0 15px;  /* and that, will result in a 10px gap */
 }
-
 .navbar-logo {
     display:flex;
     align-items: center;
@@ -116,13 +127,13 @@ body {
 }
 
 .navbar-profile-name:after {
-  content: '';
-  position:absolute;
-  margin-left:5px;
-  margin-top:7px;
-  border-top: 10px solid #eeeeee;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
+    content: '';
+    position:absolute;
+    margin-left:5px;
+    margin-top:7px;
+    border-top: 10px solid #eeeeee;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
 }
 .navbar-profile-pens {
     color:#AAAAAA;
@@ -152,7 +163,7 @@ body {
     }
     .navbar-search{
         width:95%;
-    max-width:100%;
+        max-width:100%;
         order:4;
     }
 }

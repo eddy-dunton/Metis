@@ -46,7 +46,7 @@ class Navbar extends React.Component {
                     <div>pallas</div>
                 </Link>
                 <div className="navbar-search">
-                    <img src={search} alt="Upload button" />
+                    <img src={search} alt="Upload button" className="clickable"/>
                     <input  placeholder="Finite automata to regular expressions"/>
                 </div>
                 <div className="navbar-upload clickable" onClick={this.uploadCallback}>
@@ -66,7 +66,7 @@ class Navbar extends React.Component {
                             </div>
 
                         ) : (
-                <div className="navbar-profile" onClick={this.loginCallback}>Sign In</div>
+                <div className="navbar-profile clickable" onClick={this.loginCallback}>Sign In</div>
                 )}
             </div>
         );

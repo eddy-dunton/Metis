@@ -42,8 +42,8 @@ class Navbar extends React.Component {
         return (
             <div className="navbar">
                 <Link to="/" className="navbar-logo clickable">
-                    <img src={logo} alt="Pallas Logo" />
-                    <div>pallas</div>
+                    <img src={logo} alt="Metis Logo" />
+                    <div>metis</div>
                 </Link>
                 <div className="navbar-search">
                     <img src={search} alt="Upload button" className="clickable"/>

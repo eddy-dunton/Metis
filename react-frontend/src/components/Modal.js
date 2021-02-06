@@ -1,3 +1,5 @@
+import React from 'react';
+
 import '../App.css';
 
 import cross from '../images/cross.svg';

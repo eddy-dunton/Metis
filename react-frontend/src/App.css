@@ -16,6 +16,17 @@ font-family: 'Roboto', sans-serif;
     supported by Chrome, Edge, Opera and Firefox */
 }
 
+.hover {
+    transition: box-shadow 0.2s, transform 0.3s; 
+    border-radius:8px;
+    padding:15px;
+    transform: scale3d(0.9, 0.9, 1);
+}
+.hover:hover {
+    transform: scale3d(1, 1, 1);
+    box-shadow: inset 0 0 0 35px rgba(255,255,255,0.3);
+}
+
 body {
     background:#313638;
     margin:0;
@@ -29,14 +40,15 @@ body {
     align-items: center;
 
     color:#FFFFFF;
-    background:#555555;
     font-family: 'Josefin Sans', sans-serif;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+
+    background: rgba(0,0,0,0.2);
 
     padding:0 15px; /* this */
 }
 
 .navbar > * {
-
     margin:0 15px;  /* and that, will result in a 10px gap */
 }
 .navbar-logo {
@@ -80,18 +92,18 @@ body {
     background:none;
     border:none;
 
-    font-size:24px;
+    font-size:20px;
+
 
     font-family: 'Roboto', sans-serif;
 }
 .navbar-search input::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color: rgba(255,255,255,0.2);
+    cocolumn: rgba(255,255,255,0.2);
     opacity: 1; /* Firefox */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
 .navbar-search img{
     padding:15px;
     width:25px;
@@ -103,6 +115,10 @@ body {
     height:30px;
 }
 
+.navbar-upload img {
+    width:30px;
+    height:30px;
+}
 .navbar-profile {
     display:flex;
     flex-direction:row;
@@ -141,7 +157,96 @@ body {
     color:#AAAAAA;
 }
 
-@media screen and (max-width: 800px) {
+.navbar-signin {
+    font-size:20px;
+    font-weight:800;
+    line-height:1;
+    font-family: 'Roboto', sans-serif;
+    text-transform:uppercase ;
+}
+
+.modal-darken {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width:100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.modal-main {
+    position:fixed;
+    background: white;
+    width: 80vw;
+    height: 80vw;
+    max-width:80vh;
+    max-height:80vh;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    border-radius:15px;
+    display:flex;
+    justify-content: center;
+}
+
+.modal-close{
+    width:15px;
+    height:15px;
+    position:absolute;
+    top:0px;
+    right:0px;
+}
+
+.display-block {
+    display: block;
+}
+
+.display-none {
+    display: none;
+}
+
+.tabs{
+    position:absolute;
+    top:0;
+    display:flex;
+    flex-direction:row;
+}
+
+.tabs > * {
+    text-transform:uppercase ;
+    background:none;
+    border:none;
+    font-family: 'Roboto', sans-serif;
+    font-size:20px;
+    font-weight:800;
+    padding:15px;
+    background-color:rgba(0,0,0,0);
+    border-bottom: 4px solid #999999;
+}
+
+.active {
+    border-bottom: 4px solid #000000;
+    background-color:rgba(0,0,0,0.2);
+}
+
+.accounts{
+    font-family: 'Roboto', sans-serif;
+    display:flex;
+    flex-direction:column;
+    align-content:center;
+    justify-content:center;
+}
+
+.accounts label{
+    font-size:24px;
+}
+
+
+.accounts input{
+    font-size:16px;
+}
+
+@media screen and (max-width: 900px) {
     .navbar {
         flex-wrap: wrap;
         height:120px;
@@ -154,6 +259,9 @@ body {
     .navbar-logo{
         order:2;
     }
+    .navbar-logo > img {
+        display:none;
+    }
     .navbar-upload{
         order:1;
     }
@@ -165,7 +273,8 @@ body {
     }
     .navbar-search{
         width:95%;
-        max-width:100%;
+        max-width:95%;
         order:4;
+        margin-bottom:15px;
     }
 }

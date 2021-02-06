@@ -22,7 +22,6 @@ class Navbar extends React.Component {
         this.getProfileInfo = this.getProfileInfo.bind(this);
     }
     async getProfileInfo() {
-        if (this.state.loggedIn){
             //const response = await fetch("/getPreviewUserInfo", {username:this.state.username});
             //const resdata = await response.json();
             const resdata = { 
@@ -33,10 +32,18 @@ class Navbar extends React.Component {
             } 
             this.setState({ profile: resdata })
             this.setState({ loading: false })
-        }
     }
     componentDidMount() {
-        this.getProfileInfo()
+        if (this.props.loggedIn){
+            this.setState({ loggedIn: this.props.loggedIn })
+            this.getProfileInfo()
+        }
+    }
+    componentDidUpdate(prevProps) {
+        if (prevProps.loggedIn !== this.props.loggedIn){
+            this.setState({ loggedIn: this.props.loggedIn })
+            this.getProfileInfo()
+        }
     }
     render() {
         return (
@@ -47,9 +54,9 @@ class Navbar extends React.Component {
                 </Link>
                 <div className="navbar-search">
                     <img src={search} alt="Upload button" className="clickable"/>
-                    <input  placeholder="Finite automata to regular expressions"/>
+                    <input  placeholder="Search..."/>
                 </div>
-                <div className="navbar-upload clickable" onClick={this.uploadCallback}>
+                <div className="navbar-upload hover clickable" onClick={this.uploadCallback}>
                     <img src={upload} alt="Upload button"/>
                 </div>
                 {this.state.loggedIn ? this.state.loading || !this.state.profile ? 
@@ -66,8 +73,8 @@ class Navbar extends React.Component {
                             </div>
 
                         ) : (
-                <div className="navbar-profile clickable" onClick={this.loginCallback}>Sign In</div>
-                )}
+                            <div className="navbar-profile navbar-signin hover clickable" onClick={this.loginCallback}>Sign In</div>
+                        )}
             </div>
         );
     }

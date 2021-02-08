@@ -94,7 +94,6 @@ body {
 
     font-size:20px;
 
-
     font-family: 'Roboto', sans-serif;
 }
 .navbar-search input::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
@@ -178,15 +177,15 @@ body {
     position:fixed;
     background: white;
     width: 80vw;
-    height: 80vw;
     max-width:80vh;
-    max-height:80vh;
+    height: 60vw;
+    max-height:60vh;
     top:50%;
     left:50%;
     transform: translate(-50%,-50%);
     border-radius:15px;
     display:flex;
-    justify-content: center;
+    flex-direction:column;
 }
 
 .modal-close{
@@ -206,10 +205,10 @@ body {
 }
 
 .tabs{
-    position:absolute;
-    top:0;
     display:flex;
     flex-direction:row;
+    align-content:center;
+    justify-content:center;
 }
 
 .tabs > * {
@@ -232,18 +231,40 @@ body {
 .accounts{
     font-family: 'Roboto', sans-serif;
     display:flex;
+    flex-grow:2;
     flex-direction:column;
-    align-content:center;
     justify-content:center;
 }
 
-.accounts label{
+.input{
+    margin:0px auto; display:block;
+    margin-bottom:16px;
+    display:flex;
+    flex-direction:column;
+}
+
+.input div{
     font-size:24px;
 }
 
 
-.accounts input{
-    font-size:16px;
+.input input{
+    font-size:20px;
+    background: #eeeeee;
+    border:none;
+    border-bottom: 2px solid #000000;
+    border-radius:7px 7px 0px 0px;
+    padding:4px;
+    width:50vw;
+    max-width:50vh;
+}
+.accounts button{
+    margin:0px auto; display:block;
+    font-size:20px;
+    color: #00A3FF;
+    background:#CCECFF;
+    border:none;
+    font-weight:600;
 }
 
 @media screen and (max-width: 900px) {
@@ -276,5 +297,8 @@ body {
         max-width:95%;
         order:4;
         margin-bottom:15px;
+    }
+    .modal-main {
+        height: 120vw;
     }
 }

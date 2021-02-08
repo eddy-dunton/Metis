@@ -7,6 +7,7 @@ import './App.css';
 
 import Navbar from './Navbar.js';
 import Home from './Home.js';
+import Reset from './reset-password.js';
 import Modal from './components/Modal.js';
 
 class App extends React.Component {
@@ -29,11 +30,17 @@ class App extends React.Component {
                 label: 'Sign In',
                 content: (
                     <div className="accounts">
-                        <label for="username">Username</label>
-                        <input type="text" id="username"/>
-                        <label for="password">Password</label>
-                        <input type="password" id="password"/>
-                        <button>SIGN IN</button>
+                        <div className="input">
+                            <div>Email or Username</div>
+                            <input type="text" id="username"/>
+                        </div>
+                        <div className="input">
+                            <div>Password</div>
+                            <input type="password" id="password"/>
+                        <a href="reset-password">Reset Password</a>
+                        </div>
+
+                        <button className="clickable hover">SIGN IN</button>
                     </div>
                 )
             },
@@ -42,6 +49,20 @@ class App extends React.Component {
                 label: 'Create Account',
                 content: (
                     <div className="accounts">
+                        <div className="input">
+                            <div>Username</div>
+                            <input type="text" id="username"/>
+                        </div>
+                        <div className="input">
+                            <div>Email</div>
+                            <input type="text" id="email"/>
+                        </div>
+                        <div className="input">
+                            <div>Password</div>
+                            <input type="password" id="password"/>
+                        </div>
+
+                        <button className="clickable hover">CREATE ACCOUNT</button>
                     </div>
                 )
             }];
@@ -77,12 +98,13 @@ class App extends React.Component {
                         ))}
                     </div>
                     {/* line below draws signin/create account based on whats picked */}
-                    { this.signInTabs.map((tab, i) => {return tab.name === this.state.currentTab ? tab.content : null; })}
+                    { this.signInTabs.find(tab => tab.name === this.state.currentTab).content}
                 </Modal>
                 <Modal show={this.state.showUpload} handleClose={this.upload}>
                     <p>Upload Modal</p>
                 </Modal>
                 <Switch>
+                    <Route path="/reset-password" component={Reset} />
                     <Route path="/" component={Home} />
                     <Redirect to="/" />
                 </Switch>

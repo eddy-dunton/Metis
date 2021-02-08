@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom'
+import { Route, Switch, Redirect, Link } from 'react-router-dom'
 
 //https://blog.logrocket.com/react-router-dom-set-up-essential-components-parameterized-routes-505dc93642f1/
 
@@ -37,7 +37,7 @@ class App extends React.Component {
                         <div className="input">
                             <div>Password</div>
                             <input type="password" id="password"/>
-                        <a href="reset-password">Reset Password</a>
+                            <Link to="/reset-password" onClick={this.login}>Reset Password</Link>
                         </div>
 
                         <button className="clickable hover">SIGN IN</button>

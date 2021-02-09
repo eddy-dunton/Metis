@@ -6,6 +6,7 @@ class UploadArea extends React.Component {
         drag: false
     }
     dropRef = React.createRef()  
+
     handleDrag = (e) => {
         e.preventDefault()
         e.stopPropagation()
@@ -13,27 +14,24 @@ class UploadArea extends React.Component {
     handleDragIn = (e) => {
         e.preventDefault()
         e.stopPropagation()
-        console.log("-dragin-")
-        console.log(e.target)
-
-        if (e.target === this.dropRef.current){
         this.setState({drag: true})
-        }
     }
     handleDragOut = (e) => {
         e.preventDefault()
         e.stopPropagation()
-        console.log("-dragout-")
-        console.log(e.target)
-        if (e.target === this.dropRef.current){
-            this.setState({drag: false})
-        }
+        this.setState({drag: false})
     }
     handleDrop = (e) => {
         e.preventDefault()
         e.stopPropagation()
         this.setState({drag: false})
         this.props.handleDrop(e.dataTransfer.files)
+    }
+
+    handleClick = (e) => {
+        document.getElementById("browse").click()
+        this.setState({drag: false})
+        this.props.handleDrop(e.target.files)
     }
     componentDidMount() {
         let div = this.dropRef.current
@@ -52,8 +50,10 @@ class UploadArea extends React.Component {
 
     render() {
         return (
-            <div ref={this.dropRef} className={this.state.drag ? "uploadArea dragging clickable" : "uploadArea clickable"}>
-                <div style={{textAlign:"center",zIndex:"-1"}}>
+            <div ref={this.dropRef} onClick={this.handleClick} className={this.state.drag ? "uploadArea dragging clickable" : "uploadArea clickable"}>
+
+                <input onChange={this.handleClick} type="file" id="browse" name="fileupload" style={{display: "none"}} />
+                <div className="uploadAreaText">
                     Drag and drop {this.props.filetype ? this.props.filetype : "PDF"} or click to browse
                 </div>
             </div>

@@ -92,10 +92,17 @@ class App extends React.Component {
         this.setState({ showUpload: !this.state.showUpload });
     }
 
-    fileUploaded(file) {
-        if (file){
-            /* TODO do someting with file*/
-            console.log(file)
+    fileUploaded(files) {
+        if (files){
+            if (files.length !== 0){
+                /* TODO do someting with file*/
+                //probably something useful here
+                //https://developer.mozilla.org/en-US/docs/Web/API/File/Using_files_from_web_applications
+                for(var i=0;i<files.length;i++){
+                    console.log(files[i])
+                    console.log(URL.createObjectURL(files[i]))
+                }
+            }
         }
     };
 

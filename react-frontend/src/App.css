@@ -177,15 +177,20 @@ body {
     position:fixed;
     background: white;
     width: 80vw;
-    max-width:80vh;
+    max-width: 80vh;
     height: 60vw;
-    max-height:60vh;
+    max-height: 60vh;
     top:50%;
     left:50%;
     transform: translate(-50%,-50%);
     border-radius:15px;
     display:flex;
     flex-direction:column;
+}
+
+.uploadModal{
+    height: 85vw;
+    max-height: 85vh;
 }
 
 .modal-close{
@@ -269,7 +274,7 @@ body {
 
 .uploadArea {
     width:90%;
-    height:30%;
+    height:40%;
     margin:5%;
     background: rgba(0, 163, 255, 0.1);
     border-radius:15px;

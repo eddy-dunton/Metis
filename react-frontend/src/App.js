@@ -98,6 +98,7 @@ class App extends React.Component {
                 /* TODO do someting with file*/
                 //probably something useful here
                 //https://developer.mozilla.org/en-US/docs/Web/API/File/Using_files_from_web_applications
+                //https://attacomsian.com/blog/uploading-files-using-fetch-api -- fetch is so op
                 for(var i=0;i<files.length;i++){
                     console.log(files[i])
                     console.log(URL.createObjectURL(files[i]))
@@ -119,7 +120,7 @@ class App extends React.Component {
                             <button 
                                 key={i}
                                 onClick={() => this.setCurrentTab(tab.name)} 
-                                className={(tab.name === this.state.currentTab) ? 'active clickable' : 'clickable'}>
+                                className={`clickable ${(tab.name === this.state.currentTab) ? 'active' : ''}`}>
                                 {tab.label}
                             </button>
                         ))}
@@ -128,7 +129,7 @@ class App extends React.Component {
                     { this.signInTabs.find(tab => tab.name === this.state.currentTab).content}
                 </Modal>
                 {/* modal is initially hidden and shown when this.upload is called */}
-                <Modal show={this.state.showUpload} handleClose={this.upload}>
+                <Modal className={"uploadModal"} show={this.state.showUpload} handleClose={this.upload}>
                     <UploadArea handleDrop={this.fileUploaded} filetype="PDF" />
                 </Modal>
                 {/* part of react router handles different paths given to it */}

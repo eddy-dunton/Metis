@@ -267,6 +267,22 @@ body {
     font-weight:600;
 }
 
+.uploadArea {
+    width:90%;
+    height:30%;
+    margin:5%;
+    background: rgba(0, 163, 255, 0.1);
+    border-radius:15px;
+    border: 2px dashed #00A3FF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dragging{
+    background: rgba(255, 163, 0, 0.1);
+}
+
 @media screen and (max-width: 900px) {
     .navbar {
         flex-wrap: wrap;

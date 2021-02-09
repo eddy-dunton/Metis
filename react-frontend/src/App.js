@@ -9,6 +9,7 @@ import Navbar from './Navbar.js';
 import Home from './Home.js';
 import Reset from './reset-password.js';
 import Modal from './components/Modal.js';
+import UploadArea from './components/UploadArea.js';
 
 class App extends React.Component {
     constructor(props) {
@@ -22,6 +23,7 @@ class App extends React.Component {
         };
         this.login = this.login.bind(this);
         this.upload = this.upload.bind(this);
+        this.fileUploaded = this.fileUploaded.bind(this);
         this.setCurrentTab = this.setCurrentTab.bind(this);
         //https://www.devaradise.com/react-tabs-tutorial
         this.signInTabs = [
@@ -80,6 +82,11 @@ class App extends React.Component {
         this.setState({ showUpload: !this.state.showUpload });
     }
 
+    fileUploaded(file) {
+        /* TODO do someting with file*/
+        console.log(file)
+    };
+
     //<Route path="/" component={} />
     render() {
         return (
@@ -101,7 +108,7 @@ class App extends React.Component {
                     { this.signInTabs.find(tab => tab.name === this.state.currentTab).content}
                 </Modal>
                 <Modal show={this.state.showUpload} handleClose={this.upload}>
-                    <p>Upload Modal</p>
+                    <UploadArea handleDrop={this.fileUploaded} filetype="PDF" />
                 </Modal>
                 <Switch>
                     <Route path="/reset-password" component={Reset} />

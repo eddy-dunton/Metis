@@ -83,8 +83,10 @@ class App extends React.Component {
     }
 
     fileUploaded(file) {
-        /* TODO do someting with file*/
-        console.log(file)
+        if (file){
+            /* TODO do someting with file*/
+            console.log(file)
+        }
     };
 
     //<Route path="/" component={} />

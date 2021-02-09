@@ -40,3 +40,13 @@ This can be installed globally with:
 And then run with
 
 ```nodemon app.js```
+
+### Pushing a production build
+
+This is for git bash
+
+```git checkout prod``` puts you in the production branch
+
+```git merge main``` merges the main branch into the current (prod)
+
+```git push``` pushes it to github

@@ -11,7 +11,7 @@
 
 It is recommended to install the dependencies for both the frontend and the backend, as both are required to host a local development server.
 
-In order to install the backend dependencies call ```npm i``` in root
+In order to install the backend dependencies call ```npm i``` in the repo root
 
 In order to install the frontend dependencies call ```npm i``` ```react-frontend```
 

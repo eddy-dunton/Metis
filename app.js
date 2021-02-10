@@ -1,6 +1,7 @@
 //Imports
-const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
+const express = require("express");
+const sqlite3 = require("sqlite3");
+const mailValidator = require("email-validator");
 
 //Connect to database
 console.log("Connecting to db");
@@ -33,12 +34,25 @@ app.use(express.static("react-frontend/build"));
   And https://github.com/mapbox/node-sqlite3/wiki/API for the SQLite documentation
 */
 
-//This was just used as a test
-//app.get('/', async (req, res) => {
-//  const result = await db.get("SELECT * FROM Test;");
-//  console.log(result);
-//  res.send(result);
-//});
+//Create user
+app.get('/createUser', async (req, res) => {
+  if (!mailValidator.validate(req.params.email)) {
+    //email failed to validate
+  }
+
+  //Find institution
+  const instDomain = req.params.email.split("@")[1];
+  await db.get("SELECT InstitutionId FROM Institution WHERE Domain = ?", instDomain, (err, row) => {
+    //Checks that a valid institution has been found
+    if (row === undefined) {
+      //Invalid email hostname
+    }
+
+    //Inst id in row.InstitutionId 
+    //Don't forget to rehash passwords
+
+  });
+});
 
 
 app.listen(3000, () => console.log("Listening"));

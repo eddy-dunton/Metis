@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/edward-dunton/Pallas#readme",
   "dependencies": {
+    "bcrypt": "^5.0.0",
     "email-validator": "^2.0.4",
     "express": "^4.17.1",
     "sqlite3": "^5.0.1"

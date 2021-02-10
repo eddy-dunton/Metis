@@ -2,11 +2,12 @@
 const express = require("express");
 const sqlite3 = require("sqlite3");
 const mailValidator = require("email-validator");
+const bcrypt = require("bcrypt");
 
 //Connect to database
 console.log("Connecting to db");
 const db = sqlite3.cached.Database("metis.db");
-console.log("Connected to db!")
+console.log("Connected to db!");
 
 const app = express();
 
@@ -42,15 +43,18 @@ app.get('/createUser', async (req, res) => {
 
   //Find institution
   const instDomain = req.params.email.split("@")[1];
-  await db.get("SELECT InstitutionId FROM Institution WHERE Domain = ?", instDomain, (err, row) => {
+  db.get("SELECT InstitutionId FROM Institution WHERE Domain = ?", instDomain, (err, row) => {
     //Checks that a valid institution has been found
     if (row === undefined) {
       //Invalid email hostname
     }
 
-    //Inst id in row.InstitutionId 
-    //Don't forget to rehash passwords
+    //Generate salt and then hash password
+    const hash = await bcrypt.hash(req.params.passwordHash, 10);
+    db.run("INSERT INTO User (Username, Password, Email, InstitutionId) VALUES (?,?,?,?);", 
+      req.params.username, hash, req.params.email, row.InstitutionId);
 
+    //Send cookie and stuff
   });
 });
 

@@ -9,6 +9,7 @@ import Navbar from './Navbar.js';
 import Home from './Home.js';
 import Reset from './reset-password.js';
 import Modal from './components/Modal.js';
+import Profile from './Profile.js';
 import UploadArea from './components/UploadArea.js';
 
 class App extends React.Component {
@@ -135,6 +136,7 @@ class App extends React.Component {
                 {/* part of react router handles different paths given to it */}
                 <Switch>
                     <Route path="/reset-password" component={Reset} />
+                    <Route path="/profile" component={Profile} />
                     <Route path="/" component={Home} />
                 </Switch>
             </div>

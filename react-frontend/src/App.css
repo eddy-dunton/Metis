@@ -45,11 +45,11 @@ body {
 
     background: rgba(0,0,0,0.2);
 
-    padding:0 15px; /* this */
+    padding:0 15px; 
 }
 
 .navbar > * {
-    margin:0 15px;  /* and that, will result in a 10px gap */
+    margin:0 15px;  
 }
 .navbar-logo {
     display:flex;
@@ -299,15 +299,66 @@ body {
     transform:scale(1.01);
 }
 
+.profile{
+    display:flex;
+    flex-direction:row;
+    justify-content:space-evenly;
+    margin:auto;
+}
+.profile-content{
+    font-family: 'Josefin Sans', sans-serif;
+    color:#ffffff;
+}
+.profile-content > *{
+    margin-left: auto;
+    margin-right: auto;
+    text-align:center;
+    display:block;
+    font-size:16px;
+}
+.profile-content-picture{
+    width:25vw;
+    height:25vw;
+    border-radius:100%;
+}
+.profile-content-username{
+    font-size:32px;
+}
+.profile-content-pens{
+    color:#AAAAAA;
+}
+.profile-notes{
+    width:50vw;
+}
+.profile-notes-inputs{}
+.profile-note{}
+.profile-note-content{
+    display:flex;
+    flex-direction:row;
+}
+.profile-note-name{}
+.profile-note-right{
+    display:flex;
+    flex-direction:row;
+}
+.profile-note-module{}
+.profile-note-under{
+    display:flex;
+    flex-direction:row;
+}
+.profile-note-pens{}
+.profile-note-downloads{}
+.profile-note-comments{}
+
 @media screen and (max-width: 900px) {
     .navbar {
         flex-wrap: wrap;
         height:120px;
-        padding:0 5px; /* this */
+        padding:0 5px; 
     }
 
     .navbar > * {
-        margin:0 0px;  /* and that, will result in a 10px gap */
+        margin:0 0px; 
     }
     .navbar-logo{
         order:2;

@@ -81,4 +81,30 @@ app.post('/createUser', (req, res) => {
 });
 
 
+//authorization
+app.post('/isUser', async (req, res) => {
+    var email = req.params.email;
+    //password is hashed on front-end
+    var passwordHash = req.params.passwordHash;
+    if (email && passwordHash) {
+        db.get('SELECT UserId, Email, Password FROM users WHERE email = ? AND password = ?', [email, passwordHash], async (error, row) => {
+            if(row === undefined) {
+            res.status(400).send({message: „Invalid credentials”});
+            }
+            else {
+            //successful authorization  
+            res.status(200).send(row[0].UserId);
+            //cookie?
+            }
+        return;
+        });
+    }
+    else {
+    res.status(400).send({message: „Credentials lacking”});
+    return;
+}
+
+});
+
+
 app.listen(3000, () => console.log("Listening"));

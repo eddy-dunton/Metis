@@ -83,7 +83,6 @@ app.post('/createUser', (req, res) => {
 
 //authorization
 app.post('/isUser', async (req, res) => {
-    var username = req.params.username;
     if (req.body.username === undefined) {
         res.status(400).send({ message: "No username field" });
         return;
@@ -95,9 +94,9 @@ app.post('/isUser', async (req, res) => {
     }
     //password is hashed again on back-end
     const hash = await bcrypt.hash(req.body.passwordHash, 10);
-    if (email && hash) {
+    if (req.params.username && hash) {
         //need for SQL injection check?
-        db.get('SELECT UserId, Email, Password FROM users WHERE (email = ? OR username = ?) AND password = ?', [username, username, hash], async (error, row) => {
+        db.get('SELECT UserId, Email, Password FROM users WHERE (email = ? OR username = ?) AND password = ?', [req.params.username, req.params.username, hash], async (error, row) => {
             if(row === undefined) {
             res.status(400).send({message: 'Invalid credentials'});
             }

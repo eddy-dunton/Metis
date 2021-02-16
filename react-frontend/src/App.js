@@ -12,9 +12,12 @@ import Modal from './components/Modal.js';
 import Profile from './Profile.js';
 import UploadArea from './components/UploadArea.js';
 
+const bcrypt = require("bcryptjs")
+
 class App extends React.Component {
     constructor(props) {
         super(props);
+
         this.state = {
             token: null,
             loggedIn: false,
@@ -27,6 +30,7 @@ class App extends React.Component {
         this.fileUploaded = this.fileUploaded.bind(this);
         this.setCurrentTab = this.setCurrentTab.bind(this);
         this.signin = this.signin.bind(this);
+        this.hashPassword = this.hashPassword.bind(this);
         this.createAccount = this.createAccount.bind(this);
         //https://www.devaradise.com/react-tabs-tutorial
         this.signInTabs = [
@@ -68,7 +72,19 @@ class App extends React.Component {
                         <button  onClick={this.createAccount}className="clickable hover">CREATE ACCOUNT</button>
                     </div>
                 )
-            }];
+            }
+        ];
+    }
+
+    async hashPassword(password){
+        this.saltRounds = 24; 
+        this.hashedPassword = await new Promise((resolve, reject) => {
+            bcrypt.hash(password, this.saltRounds, function(err, hash) {
+                if (err) reject(err)
+                resolve(hash)
+            });
+        })
+        return this.hashedPassword
     }
 
     setCurrentTab(cur) {
@@ -79,7 +95,7 @@ class App extends React.Component {
         this.user = {
             username : document.getElementById("username").value,
             email : document.getElementById("email").value,
-            password : document.getElementById("password").value
+            passwordHash : this.hashPassword(document.getElementById("password").value)
         }
         let response = await fetch('/createUser', {
             method: 'POST',
@@ -88,23 +104,23 @@ class App extends React.Component {
             },
             body: JSON.stringify(this.user)
         });
-        console.log(response.json())
+        console.log(await response.json())
         this.login()
     }
 
     async signin(e){
         this.user = {
             username : document.getElementById("username").value,
-            password : document.getElementById("password").value
+            passwordHash :this.hashPassword(document.getElementById("password").value)
         }
-        let response = await fetch('/createUser', {
+        let response = await fetch('/isUser', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
             },
             body: JSON.stringify(this.user)
         });
-        console.log(response.json())
+        console.log(await response.json())
         this.login()
     }
 

@@ -60,7 +60,7 @@ class Navbar extends React.Component {
                     <img src={upload} alt="Upload button"/>
                 </div>
                 {/* if its loading the profile say its loading, if not logged in show the login button, if not loading and logged in show profile */}
-                {this.state.loggedIn ? this.state.loading || !this.state.profile ? 
+                {this.state.loggedIn ? (this.state.loading || !this.state.profile) ? 
                         (
                             <div className="navbar-profile">Loading...</div>
                         ) : (

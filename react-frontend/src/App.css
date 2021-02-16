@@ -45,11 +45,11 @@ body {
 
     background: rgba(0,0,0,0.2);
 
-    padding:0 15px; /* this */
+    padding:0 15px; 
 }
 
 .navbar > * {
-    margin:0 15px;  /* and that, will result in a 10px gap */
+    margin:0 15px;  
 }
 .navbar-logo {
     display:flex;
@@ -299,15 +299,99 @@ body {
     transform:scale(1.01);
 }
 
+.profile{
+    display:flex;
+    flex-direction:row;
+    justify-content:center;
+    margin:auto;
+}
+.profile-content{
+    font-family: 'Josefin Sans', sans-serif;
+    color:#ffffff;
+    margin-right:32px;
+}
+.profile-content > *{
+    margin-left: auto;
+    margin-right: auto;
+    text-align:center;
+    display:block;
+    font-size:16px;
+}
+
+.profile-content-picture{
+    width:210px;
+    height:210px;
+    border-radius:100%;
+}
+.profile-content-username{
+    font-size:32px;
+}
+.profile-content-pens{
+    color:#AAAAAA;
+}
+.profile-notes{
+    width:50vw;
+}
+.profile-notes-inputs{}
+.profile-note{}
+.profile-note-content{
+    display:flex;
+    flex-direction:row;
+    justify-content: space-between;
+    padding:16px;
+    background:#FFFFFF;
+    border-radius:15px;
+    box-shadow: 2px 2px 0px 4px rgba(255, 255, 255, 0.25);
+    text-align: center;
+    line-height: 48px;  
+    margin: 16px 0px;
+}
+.profile-note-pdf{
+
+}
+.profile-note-name{
+    font-family: 'Josefin Sans', sans-serif;
+
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size:32px;
+}
+.profile-note-left{
+    display:flex;
+    flex-direction:row;
+}
+.profile-note-right{
+    display:flex;
+    flex-direction:row;
+}
+.profile-note-module{
+    font-family: 'Roboto', sans-serif;
+}
+.profile-note-under{
+    display:flex;
+    flex-direction:row;
+    justify-content:flex-end;
+}
+.profile-note-under > * {
+    padding:4px;
+    margin-left:8px;
+    border-radius:5px;
+    font-size:16px;
+    background: #5C5C5C;
+    color:#FFFFFF;
+    font-family: 'Roboto', sans-serif;
+}
+
 @media screen and (max-width: 900px) {
     .navbar {
         flex-wrap: wrap;
         height:120px;
-        padding:0 5px; /* this */
+        padding:0 5px; 
     }
 
     .navbar > * {
-        margin:0 0px;  /* and that, will result in a 10px gap */
+        margin:0 0px; 
     }
     .navbar-logo{
         order:2;

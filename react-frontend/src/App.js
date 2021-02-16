@@ -9,13 +9,14 @@ import Navbar from './Navbar.js';
 import Home from './Home.js';
 import Reset from './reset-password.js';
 import Modal from './components/Modal.js';
+import Profile from './Profile.js';
 import UploadArea from './components/UploadArea.js';
 
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            username:"",
+            token: null,
             loggedIn: false,
             showLogin: false,
             showUpload: false,
@@ -74,14 +75,37 @@ class App extends React.Component {
         this.setState({ currentTab:cur });
     }
 
-    createAccount (e){
-        //TODO:handle createAccount (when createAccount button is clicked on tab)
-        console.log(e)
+    async createAccount (e){
+        this.user = {
+            username : document.getElementById("username").value,
+            email : document.getElementById("email").value,
+            password : document.getElementById("password").value
+        }
+        let response = await fetch('/createUser', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(this.user)
+        });
+        console.log(response.json())
+        this.login()
     }
 
-    signin(e){
-        //TODO:handle sign in (when sign in button is clicked on tab)
-        console.log(e)
+    async signin(e){
+        this.user = {
+            username : document.getElementById("username").value,
+            password : document.getElementById("password").value
+        }
+        let response = await fetch('/createUser', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(this.user)
+        });
+        console.log(response.json())
+        this.login()
     }
 
     login(e) {
@@ -111,7 +135,7 @@ class App extends React.Component {
     render() {
         return (
             <div className="app">
-                <Navbar username={this.state.username} loggedIn={this.state.loggedIn} uploadCallback={this.upload} loginCallback={this.login} />
+                <Navbar token={this.state.token} loggedIn={this.state.loggedIn} uploadCallback={this.upload} loginCallback={this.login} />
                 {/* modal is initially hidden and shown when this.login is called */}
                 <Modal show={this.state.showLogin} handleClose={this.login}>
                     {/* sets up the tab buttons */}
@@ -135,6 +159,7 @@ class App extends React.Component {
                 {/* part of react router handles different paths given to it */}
                 <Switch>
                     <Route path="/reset-password" component={Reset} />
+                    <Route path="/profile" component={Profile} />
                     <Route path="/" component={Home} />
                 </Switch>
             </div>

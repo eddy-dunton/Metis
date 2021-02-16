@@ -71,6 +71,7 @@ app.post('/createUser', (req, res) => {
 
     //Generate salt and then hash password
     const hash = await bcrypt.hash(req.body.passwordHash, 10);
+
     db.run("INSERT INTO User (Username, Password, Email, InstitutionId) VALUES (?,?,?,?);", 
       req.body.username, hash, req.body.email, row.InstitutionId, (err) => {
         if (err === null) { //Account successfully created
@@ -114,8 +115,8 @@ app.post('/isUser', async (req, res) => {
       req.body.username !== undefined ? req.body.username : "", 
       req.body.email !== undefined ? req.body.email : "", 
       hash];
-    
-    db.get('SELECT Username FROM Users WHERE (Username = ? OR Email = ?) AND Password = ?', params, (err, row) => {
+
+    db.get('SELECT Username FROM User WHERE (Username = ? OR Email = ?) AND Password = ?', params, (err, row) => {
       if (row === undefined) {
         res.status(400).send({error: 'Invalid credentials'});
         return;

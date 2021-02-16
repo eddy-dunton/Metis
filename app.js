@@ -83,13 +83,23 @@ app.post('/createUser', (req, res) => {
 
 //authorization
 app.post('/isUser', async (req, res) => {
-    var email = req.params.email;
-    //password is hashed on front-end
-    var passwordHash = req.params.passwordHash;
-    if (email && passwordHash) {
-        db.get('SELECT UserId, Email, Password FROM users WHERE email = ? AND password = ?', [email, passwordHash], async (error, row) => {
+    var username = req.params.username;
+    if (req.body.username === undefined) {
+        res.status(400).send({ message: "No username field" });
+        return;
+    }
+    //password is hashed on front-end 
+    if (req.body.passwordHash === undefined) {
+        res.status(400).send({ message: "No password field" });
+        return;
+    }
+    //password is hashed again on back-end
+    const hash = await bcrypt.hash(req.body.passwordHash, 10);
+    if (email && hash) {
+        //need for SQL injection check?
+        db.get('SELECT UserId, Email, Password FROM users WHERE (email = ? OR username = ?) AND password = ?', [username, username, hash], async (error, row) => {
             if(row === undefined) {
-            res.status(400).send({message: „Invalid credentials”});
+            res.status(400).send({message: 'Invalid credentials'});
             }
             else {
             //successful authorization  
@@ -100,7 +110,7 @@ app.post('/isUser', async (req, res) => {
         });
     }
     else {
-    res.status(400).send({message: „Credentials lacking”});
+    res.status(400).send({message: 'Credentials lacking'});
     return;
 }
 

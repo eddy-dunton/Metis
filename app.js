@@ -83,36 +83,40 @@ app.post('/createUser', (req, res) => {
 
 //authorization
 app.post('/isUser', async (req, res) => {
+    //Check if params are missing
+    //This may yet need some tweaks to stop SQL injection
     if (req.body.username === undefined) {
-        res.status(400).send({ message: "No username field" });
+      if (req.body.email === undefined) {
+        res.status(400).send({ message: "No username or email field" });
         return;
+      } else {
+        //Check for invalid email
+        if (!mailValidator.validate(req.body.email)) {
+          res.status(400).send({message: "Email Invalid"});
+          return;
+        }
+      }
     }
+    
     //password is hashed on front-end 
     if (req.body.passwordHash === undefined) {
         res.status(400).send({ message: "No password field" });
         return;
     }
+
     //password is hashed again on back-end
     const hash = await bcrypt.hash(req.body.passwordHash, 10);
-    if (req.params.username && hash) {
-        //need for SQL injection check?
-        db.get('SELECT UserId, Email, Password FROM users WHERE (email = ? OR username = ?) AND password = ?', [req.params.username, req.params.username, hash], async (error, row) => {
-            if(row === undefined) {
-            res.status(400).send({message: 'Invalid credentials'});
-            }
-            else {
-            //successful authorization  
-            res.status(200).send(row[0].UserId);
-            //cookie?
-            }
-        return;
-        });
-    }
-    else {
-    res.status(400).send({message: 'Credentials lacking'});
-    return;
-}
-
+    //need for SQL injection check?
+    //This SQL might have to be changed, as it could potentially allow you to check 2 different accounts at the same time
+    db.get('SELECT UserId, Email, Password FROM users WHERE (email = ? OR username = ?) AND password = ?', [req.body.email, req.body.username, hash], async (error, row) => {
+        if(row === undefined) {
+          res.status(400).send({message: 'Invalid credentials'});
+        } else {
+          //successful authorization  
+          res.status(200).send(row[0].UserId); //This might have to change to row.UserId
+          //cookie?
+        }
+    });
 });
 
 

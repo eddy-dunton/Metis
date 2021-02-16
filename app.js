@@ -40,28 +40,32 @@ app.use(express.json());
 
 //Create user
 app.post('/createUser', (req, res) => {
+  const email = req.body.email;
+  const username = req.body.username;
+  const password = req.body.password;
+
   //Check if params are missing
-  if (req.body.email === undefined) {
+  if (email === undefined) {
     res.status(400).send({message: "No email"});
     return;
   }
-  if (req.body.username === undefined) {
+  if (username === undefined) {
     res.status(400).send({message: "No username"});
     return;
   }
-  if (req.body.passwordHash === undefined) {
+  if (password === undefined) {
     res.status(400).send({message: "No password"});
     return;
   }
 
   //Check for invalid email
-  if (!mailValidator.validate(req.body.email)) {
+  if (!mailValidator.validate(email)) {
     res.status(400).send({message: "Email Invalid"});
     return;
   }
 
   //Find institution
-  const instDomain = req.body.email.split("@")[1];
+  const instDomain = email.split("@")[1];
   return db.get("SELECT InstitutionId FROM Institution WHERE Domain = ?", instDomain, async (err, row) => {
     //Checks that a valid institution has been found
     if (row === undefined) {
@@ -70,12 +74,12 @@ app.post('/createUser', (req, res) => {
     }
 
     //Generate salt and then hash password
-    const hash = await bcrypt.hash(req.body.passwordHash, 10);
+    const hash = await bcrypt.hash(password, 10);
 
     db.run("INSERT INTO User (Username, Password, Email, InstitutionId) VALUES (?,?,?,?);", 
-      req.body.username, hash, req.body.email, row.InstitutionId, (err) => {
+      username, hash, email, row.InstitutionId, (err) => {
         if (err === null) { //Account successfully created
-          res.status(200).send({token: session.addToken(req.body.username)});
+          res.status(200).send({token: session.addToken(username)});
         } else { //Email / Username already taken
           res.status(400).send({eror: "Email / Username already taken"});
         }
@@ -85,15 +89,19 @@ app.post('/createUser', (req, res) => {
 
 //authorization
 app.post('/isUser', async (req, res) => {
+  const email = req.body.email;
+  const username = req.body.username;
+  const password = req.body.passwordHash;
+
     //Check if params are missing
     //This may yet need some tweaks to stop SQL injection
-    if (req.body.username === undefined) {
-      if (req.body.email === undefined) {
+    if (username === undefined) {
+      if (email === undefined) {
         res.status(400).send({error: "No username or email field" });
         return;
       } else {
         //Check for invalid email
-        if (!mailValidator.validate(req.body.email)) {
+        if (!mailValidator.validate(email)) {
           res.status(400).send({error: "Email Invalid"});
           return;
         }
@@ -101,19 +109,19 @@ app.post('/isUser', async (req, res) => {
     }
     
     //password is hashed on front-end 
-    if (req.body.passwordHash === undefined) {
+    if (password === undefined) {
         res.status(400).send({error: "No password field" });
         return;
     }
 
     //password is hashed again on back-end
-    const hash = await bcrypt.hash(req.body.passwordHash, 10);
+    const hash = await bcrypt.hash(password, 10);
 
     //need for SQL injection check?
     //Replace undefined parameters with blanks
     const params = [
-      req.body.username !== undefined ? req.body.username : "", 
-      req.body.email !== undefined ? req.body.email : "", 
+      username !== undefined ? username : "", 
+      email !== undefined ? email : "", 
       hash];
 
     db.get('SELECT Username FROM User WHERE (Username = ? OR Email = ?) AND Password = ?', params, (err, row) => {
@@ -123,7 +131,7 @@ app.post('/isUser', async (req, res) => {
       }
 
       //Valid
-      res.status(200).send({username: row.username, token: session.addToken(req.body.username)});
+      res.status(200).send({username: row.username, token: session.addToken(username)});
     });
 });
 

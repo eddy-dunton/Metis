@@ -302,12 +302,13 @@ body {
 .profile{
     display:flex;
     flex-direction:row;
-    justify-content:space-evenly;
+    justify-content:center;
     margin:auto;
 }
 .profile-content{
     font-family: 'Josefin Sans', sans-serif;
     color:#ffffff;
+    margin-right:32px;
 }
 .profile-content > *{
     margin-left: auto;
@@ -316,9 +317,10 @@ body {
     display:block;
     font-size:16px;
 }
+
 .profile-content-picture{
-    width:25vw;
-    height:25vw;
+    width:210px;
+    height:210px;
     border-radius:100%;
 }
 .profile-content-username{
@@ -335,20 +337,51 @@ body {
 .profile-note-content{
     display:flex;
     flex-direction:row;
+    justify-content: space-between;
+    padding:16px;
+    background:#FFFFFF;
+    border-radius:15px;
+    box-shadow: 2px 2px 0px 4px rgba(255, 255, 255, 0.25);
+    text-align: center;
+    line-height: 48px;  
+    margin: 16px 0px;
 }
-.profile-note-name{}
+.profile-note-pdf{
+
+}
+.profile-note-name{
+    font-family: 'Josefin Sans', sans-serif;
+
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size:32px;
+}
+.profile-note-left{
+    display:flex;
+    flex-direction:row;
+}
 .profile-note-right{
     display:flex;
     flex-direction:row;
 }
-.profile-note-module{}
+.profile-note-module{
+    font-family: 'Roboto', sans-serif;
+}
 .profile-note-under{
     display:flex;
     flex-direction:row;
+    justify-content:flex-end;
 }
-.profile-note-pens{}
-.profile-note-downloads{}
-.profile-note-comments{}
+.profile-note-under > * {
+    padding:4px;
+    margin-left:8px;
+    border-radius:5px;
+    font-size:16px;
+    background: #5C5C5C;
+    color:#FFFFFF;
+    font-family: 'Roboto', sans-serif;
+}
 
 @media screen and (max-width: 900px) {
     .navbar {

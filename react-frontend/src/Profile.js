@@ -1,7 +1,6 @@
 import React from 'react';
 import './App.css';
 
-
 import dots from './images/dots.svg';
 import arrow from './images/arrow.svg';
 
@@ -65,7 +64,11 @@ class Profile extends React.Component {
                                 {this.state.profile.notes.map((note, i) => (
                                     <div className="profile-note" key={i}>
                                         <div className="profile-note-content">
-                                            <div className="profile-note-name">{note.name}</div>
+                                            
+                                            <div className="profile-note-left">
+                                                <div className="profile-note-pdf">PDF</div>
+                                                <div className="profile-note-name">{note.name}</div>
+                                            </div>
                                             <div className="profile-note-right">
                                                 <div className="profile-note-module">{note.module}</div>
                                                 <img width="32px" alt="choice dots" src={dots}/>
@@ -73,9 +76,9 @@ class Profile extends React.Component {
                                             </div>
                                         </div>
                                         <div className="profile-note-under">
-                                            <div className="profile-note-pens"><span role="img" aria-label="pen">🖋️</span> {note.pens} pens</div>
-                                            <div className="profile-note-downloads">{note.downloads} downlaods</div>
-                                            <div className="profile-note-comments">{note.comments} comments</div>
+                                            <div><span role="img" aria-label="pen">🖋️</span> {note.pens} pens</div>
+                                            <div>{note.downloads} downloads</div>
+                                            <div>{note.comments} comments</div>
                                         </div>
                                     </div>
                                 ))}

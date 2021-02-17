@@ -13,7 +13,7 @@ console.log("Connected to db!");
 
 const app = express();
 
-const regexUsername = /^[\w]{6,32}$/
+const regexUsername = /^[\w]{1,32}$/
 
 //Sets up the app to serve files the public folder
 app.use(express.static("react-frontend/build"));
@@ -89,45 +89,63 @@ app.post('/isUser', async (req, res) => {
   const username = req.body.username;
   const password = req.body.passwordHash;
 
-    //Check if params are missing
-    //This may yet need some tweaks to stop SQL injection
-    if (username === undefined || !regexUsername.test(username)) {
-      if (email === undefined) {
-        res.status(400).send({error: "No username or email field" });
+  //Check if params are missing
+  //This may yet need some tweaks to stop SQL injection
+  if (username === undefined || !regexUsername.test(username)) {
+    if (email === undefined) {
+      res.status(400).send({error: "No username or email field" });
+      return;
+    } else {
+      //Check for invalid email
+      if (!mailValidator.validate(email)) {
+        res.status(400).send({error: "Email Invalid"});
         return;
-      } else {
-        //Check for invalid email
-        if (!mailValidator.validate(email)) {
-          res.status(400).send({error: "Email Invalid"});
-          return;
-        }
       }
     }
+  }
     
-    //password is hashed on front-end 
-    if (password === undefined) {
-        res.status(400).send({error: "No password field" });
-        return;
+  //password is hashed on front-end 
+  if (password === undefined) {
+      res.status(400).send({error: "No password field" });
+      return;
+  }
+
+  //need for SQL injection check?
+  //Replace undefined parameters with blanks
+  const params = [
+    username !== undefined ? username : "", 
+    email !== undefined ? email : ""];
+
+  db.get('SELECT Username, Password FROM User WHERE (Username = ? OR Email = ?)', params, (err, row) => {
+    if (row === undefined) {
+      res.status(400).send({error: 'Invalid credentials'});
+      return;
     }
 
-    //need for SQL injection check?
-    //Replace undefined parameters with blanks
-    const params = [
-      username !== undefined ? username : "", 
-      email !== undefined ? email : ""];
-
-    db.get('SELECT Username, Password FROM User WHERE (Username = ? OR Email = ?)', params, (err, row) => {
-      if (row === undefined) {
-        res.status(400).send({error: 'Invalid credentials'});
-        return;
-      }
-
-      bcrypt.compare(password, row.Password, (err, result) =>{
-        if (result) res.status(200).send({username: row.Username, token: session.addToken(username)});
-        else res.status(400).send({error: 'Invalid credentials'});
-      });
+    bcrypt.compare(password, row.Password, (err, result) =>{
+      if (result) res.status(200).send({username: row.Username, token: session.addToken(username)});
+      else res.status(400).send({error: 'Invalid credentials'});
     });
+  });
 });
 
+
+app.get("/getUserPreview", async (req, res) =>{
+  const username = req.body.username;
+  
+  if (username === undefined || !regexUsername.test(username)) {
+    res.status(400).send({message: "No / Invalid username"});
+    return;
+  }
+
+  db.get("SELECT User.Score, Institution.Name FROM User NATURAL JOIN Institution WHERE User.Username = ?", username, (err, row) => {
+    if (row === undefined) {
+      res.status(400).send({message: "No user found"});
+      return;
+    }
+
+    res.status(200).send({username: username, score: row.Score, inst: row.Name});
+  });
+});
 
 app.listen(3000, () => console.log("Listening"));

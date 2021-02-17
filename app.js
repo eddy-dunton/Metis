@@ -13,7 +13,7 @@ console.log("Connected to db!");
 
 const app = express();
 
-const regexUsername = /^[\w]{6,32}$/
+const regexUsername = /^[\w]{1,32}$/
 
 //Sets up the app to serve files the public folder
 app.use(express.static("react-frontend/build"));

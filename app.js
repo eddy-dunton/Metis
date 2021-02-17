@@ -77,7 +77,7 @@ app.post('/createUser', (req, res) => {
         if (err === null) { //Account successfully created
           res.status(200).send({token: session.addToken(username)});
         } else { //Email / Username already taken
-          res.status(400).send({eror: "Email / Username already taken"});
+          res.status(400).send({error: "Email / Username already taken"});
         }
       });
   });

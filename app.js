@@ -42,7 +42,7 @@ app.use(express.json());
 app.post('/createUser', (req, res) => {
   const email = req.body.email;
   const username = req.body.username;
-  const password = req.body.password;
+  const password = req.body.passwordHash;
 
   //Check if params are missing
   if (email === undefined) {
@@ -114,24 +114,22 @@ app.post('/isUser', async (req, res) => {
         return;
     }
 
-    //password is hashed again on back-end
-    const hash = await bcrypt.hash(password, 10);
-
     //need for SQL injection check?
     //Replace undefined parameters with blanks
     const params = [
       username !== undefined ? username : "", 
-      email !== undefined ? email : "", 
-      hash];
+      email !== undefined ? email : ""];
 
-    db.get('SELECT Username FROM User WHERE (Username = ? OR Email = ?) AND Password = ?', params, (err, row) => {
+    db.get('SELECT Username, Password FROM User WHERE (Username = ? OR Email = ?)', params, (err, row) => {
       if (row === undefined) {
         res.status(400).send({error: 'Invalid credentials'});
         return;
       }
 
-      //Valid
-      res.status(200).send({username: row.username, token: session.addToken(username)});
+      bcrypt.compare(password, row.Password, (err, result) =>{
+        if (result) res.status(200).send({username: row.Username, token: session.addToken(username)});
+        else res.status(400).send({error: 'Invalid credentials'});
+      });
     });
 });
 

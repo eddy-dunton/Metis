@@ -13,6 +13,8 @@ console.log("Connected to db!");
 
 const app = express();
 
+const regexUsername = /^[\w]{6,32}$/
+
 //Sets up the app to serve files the public folder
 app.use(express.static("react-frontend/build"));
 app.use(express.json());
@@ -45,22 +47,16 @@ app.post('/createUser', (req, res) => {
   const password = req.body.passwordHash;
 
   //Check if params are missing
-  if (email === undefined) {
-    res.status(400).send({message: "No email"});
+  if (email === undefined || !mailValidator.validate(email)) {
+    res.status(400).send({message: "No / Invalid email"});
     return;
   }
-  if (username === undefined) {
-    res.status(400).send({message: "No username"});
+  if (username === undefined || !regexUsername.test(username)) {
+    res.status(400).send({message: "No / Invalid username"});
     return;
   }
   if (password === undefined) {
     res.status(400).send({message: "No password"});
-    return;
-  }
-
-  //Check for invalid email
-  if (!mailValidator.validate(email)) {
-    res.status(400).send({message: "Email Invalid"});
     return;
   }
 
@@ -95,7 +91,7 @@ app.post('/isUser', async (req, res) => {
 
     //Check if params are missing
     //This may yet need some tweaks to stop SQL injection
-    if (username === undefined) {
+    if (username === undefined || !regexUsername.test(username)) {
       if (email === undefined) {
         res.status(400).send({error: "No username or email field" });
         return;

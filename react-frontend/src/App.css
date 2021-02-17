@@ -243,6 +243,8 @@ body {
 
 .input{
     margin:0px auto; display:block;
+    width:50vw;
+    max-width:50vh;
     margin-bottom:16px;
     display:flex;
     flex-direction:column;
@@ -260,9 +262,22 @@ body {
     border-bottom: 2px solid #000000;
     border-radius:7px 7px 0px 0px;
     padding:4px;
-    width:50vw;
-    max-width:50vh;
 }
+
+.input-error {
+    background: #FFeeee !important;
+    border-bottom: 2px solid #FF0000 !important;
+}
+
+.input-success {
+    background: #eeFFee !important;
+    border-bottom: 2px solid #00FF00 !important;
+}
+.error-message{
+    color:#FF0000;
+    font-size:16px !important;
+}
+
 .accounts button{
     margin:0px auto; display:block;
     font-size:20px;

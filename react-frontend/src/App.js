@@ -20,6 +20,7 @@ class App extends React.Component {
 
         this.state = {
             token: null,
+            username: null,
             loggedIn: false,
             showLogin: false,
             showUpload: false,
@@ -41,11 +42,13 @@ class App extends React.Component {
                     <div className="accounts">
                         <div className="input">
                             <div>Email or Username</div>
-                            <input type="text" id="username"/>
+                            <input type="text" defaultValue="" id="username"/>
+                            <div className="error-message"></div>
                         </div>
                         <div className="input">
                             <div>Password</div>
-                            <input type="password" id="password"/>
+                            <input type="password" defaultValue=""  id="password"/>
+                            <div className="error-message"></div>
                             <Link to="/reset-password" onClick={this.login}>Reset Password</Link>
                         </div>
                         <button onClick={this.signin} className="clickable hover">SIGN IN</button>
@@ -59,15 +62,18 @@ class App extends React.Component {
                     <div className="accounts">
                         <div className="input">
                             <div>Username</div>
-                            <input type="text" id="username"/>
+                            <input type="text" defaultValue="" id="username"/>
+                            <div className="error-message"></div>
                         </div>
                         <div className="input">
                             <div>Email</div>
-                            <input type="text" id="email"/>
+                            <input type="text" defaultValue="" id="email"/>
+                            <div className="error-message"></div>
                         </div>
                         <div className="input">
                             <div>Password</div>
-                            <input type="password" id="password"/>
+                            <input type="password" defaultValue="" id="password"/>
+                            <div className="error-message"></div>
                         </div>
                         <button  onClick={this.createAccount}className="clickable hover">CREATE ACCOUNT</button>
                     </div>
@@ -77,7 +83,7 @@ class App extends React.Component {
     }
 
     async hashPassword(password){
-        this.saltRounds = 24; 
+        this.saltRounds = 10; 
         this.hashedPassword = await new Promise((resolve, reject) => {
             bcrypt.hash(password, this.saltRounds, function(err, hash) {
                 if (err) reject(err)
@@ -88,40 +94,109 @@ class App extends React.Component {
     }
 
     setCurrentTab(cur) {
+       this.inputs = [document.getElementById("username"),document.getElementById("password")]
+        if (document.getElementById("email")){
+            this.inputs.push(document.getElementById("email"))
+        }
+        this.inputs.forEach(x => {
+            x.value = ""
+            x.nextElementSibling.innerHTML = "";
+            x.classList.remove("input-success")
+            x.classList.remove("input-error")
+        })
         this.setState({ currentTab:cur });
     }
 
+    error(element, err) {
+        element.classList.add("input-error")
+        element.classList.remove("input-success")
+        element.nextElementSibling.innerHTML = err;
+    }
+
+    fine(element) {
+        element.classList.add("input-success")
+        element.classList.remove("input-error")
+        element.nextElementSibling.innerHTML = "";
+    }
+
     async createAccount (e){
-        this.user = {
-            username : document.getElementById("username").value,
-            email : document.getElementById("email").value,
-            passwordHash : this.hashPassword(document.getElementById("password").value)
+        this.username = document.getElementById("username").value
+        let isErr = false;
+        if (!this.username.match(/^[\w]{1,32}$/)){
+            this.error(document.getElementById("username"), "username should be less than 32 characters long.");
+            isErr = true;
+        } else {
+            this.fine(document.getElementById("username"));
+        }
+        this.email = document.getElementById("email").value
+        if (!this.email.match(/[^@ \t\r\n]+@[^@ \t\r\n]+\.ac\.uk/)){
+            this.error(document.getElementById("email"), "email not valid form.");
+            isErr = true;
+        } else {
+            this.fine(document.getElementById("email"));
+        }
+
+        this.password = document.getElementById("password").value
+        if (!this.password.match(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$/)){
+            this.error(document.getElementById("password"), "password should be 8 characters, have atleast 1 lower and upper case letter, a number and a special character");
+            isErr = true;
+        } else {
+            this.fine(document.getElementById("password"));
+        }
+        if (isErr){
+            return
+        }
+        let user = {
+            username : this.username,
+            email : this.email,
+            passwordHash : await this.hashPassword(this.password)
         }
         let response = await fetch('/createUser', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
             },
-            body: JSON.stringify(this.user)
+            body: JSON.stringify(user)
         });
-        console.log(await response.json())
-        this.login()
+        let resjson = await response.json()
+        if (resjson.error){
+            if (resjson.error.toLowerCase().includes("password")){
+                this.error(document.getElementById("password"),resjson.error)
+            } else if (resjson.error.toLowerCase().includes("email")){
+                this.error(document.getElementById("email"),resjson.error)
+            } else {
+                this.error(document.getElementById("username"),resjson.error)
+            }
+        } else {
+            this.setState({ token: resjson.token, username:this.username, loggedIn : true});
+            this.login()
+        }
     }
 
     async signin(e){
-        this.user = {
+        let user = {
             username : document.getElementById("username").value,
-            passwordHash :this.hashPassword(document.getElementById("password").value)
+            passwordHash :await this.hashPassword(document.getElementById("password").value)
         }
         let response = await fetch('/isUser', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
             },
-            body: JSON.stringify(this.user)
+            body: JSON.stringify(user)
         });
-        console.log(await response.json())
-        this.login()
+        let resjson = await response.json()
+        if (resjson.error){
+            if (resjson.error.toLowerCase().includes("password")){
+                this.error(document.getElementById("password"),resjson.error)
+            } else {
+                this.error(document.getElementById("username"),resjson.error)
+            }
+            console.log(resjson.error)
+        } else {
+            this.setState({ token: resjson.token, username:this.username,loggedIn : true});
+            this.login()
+        }
     }
 
     login(e) {

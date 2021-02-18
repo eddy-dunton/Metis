@@ -130,11 +130,17 @@ app.post('/isUser', async (req, res) => {
 });
 
 
-app.get("/getUserPreview", async (req, res) =>{
-  const username = req.body.username;
-  
+app.get("/getUserPreview/:username&token=:token", async (req, res) =>{
+  const username = req.params.username;
+  const token = req.params.token;
+
   if (username === undefined || !regexUsername.test(username)) {
     res.status(400).send({message: "No / Invalid username"});
+    return;
+  }
+
+  if (!session.validToken(token)) {
+    res.status(400).send({message: "Invalid login"});
     return;
   }
 

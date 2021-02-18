@@ -40,6 +40,9 @@ app.use(express.json());
   And https://github.com/mapbox/node-sqlite3/wiki/API for the SQLite documentation
 */
 
+const SQL_CREATEUSER_FIND_INSTITUTION = db.prepare("SELECT InstitutionId FROM Institution WHERE Domain = ?");
+const SQL_CREATEUSER_INSERT_USER = db.prepare("INSERT INTO User (Username, Password, Email, InstitutionId) VALUES (?,?,?,?);");
+
 //Create user
 app.post('/createUser', (req, res) => {
   const email = req.body.email;
@@ -62,7 +65,7 @@ app.post('/createUser', (req, res) => {
 
   //Find institution
   const instDomain = email.split("@")[1];
-  return db.get("SELECT InstitutionId FROM Institution WHERE Domain = ?", instDomain, async (err, row) => {
+  SQL_CREATEUSER_FIND_INSTITUTION.get(instDomain, async (err, row) => {
     //Checks that a valid institution has been found
     if (row === undefined) {
       res.status(400).send({error: "Not a valid university email"});
@@ -72,16 +75,17 @@ app.post('/createUser', (req, res) => {
     //Generate salt and then hash password
     const hash = await bcrypt.hash(password, 10);
 
-    db.run("INSERT INTO User (Username, Password, Email, InstitutionId) VALUES (?,?,?,?);", 
-      username, hash, email, row.InstitutionId, (err) => {
-        if (err === null) { //Account successfully created
-          res.status(200).send({token: session.addToken(username)});
-        } else { //Email / Username already taken
-          res.status(400).send({error: "Email / Username already taken"});
-        }
-      });
+    SQL_CREATEUSER_INSERT_USER.run(username, hash, email, row.InstitutionId, (err) => {
+      if (err === null) { //Account successfully created
+        res.status(200).send({token: session.addToken(username)});
+      } else { //Email / Username already taken
+        res.status(400).send({error: "Email / Username already taken"});
+      }
+    });
   });
 });
+
+const SQL_ISUSER = db.prepare('SELECT Username, Password FROM User WHERE (Username = ? OR Email = ?)');
 
 //authorization
 app.post('/isUser', async (req, res) => {
@@ -116,7 +120,7 @@ app.post('/isUser', async (req, res) => {
     username !== undefined ? username : "", 
     email !== undefined ? email : ""];
 
-  db.get('SELECT Username, Password FROM User WHERE (Username = ? OR Email = ?)', params, (err, row) => {
+  SQL_ISUSER.get(params, (err, row) => {
     if (row === undefined) {
       res.status(400).send({error: 'Invalid credentials'});
       return;
@@ -129,6 +133,8 @@ app.post('/isUser', async (req, res) => {
   });
 });
 
+
+const SQL_GETUSERPREVIEW = db.prepare("SELECT User.Score, Institution.Name FROM User NATURAL JOIN Institution WHERE User.Username = ?");
 
 app.get("/getUserPreview/:username&token=:token", async (req, res) =>{
   const username = req.params.username;
@@ -144,7 +150,7 @@ app.get("/getUserPreview/:username&token=:token", async (req, res) =>{
     return;
   }
 
-  db.get("SELECT User.Score, Institution.Name FROM User NATURAL JOIN Institution WHERE User.Username = ?", username, (err, row) => {
+  SQL_GETUSERPREVIEW.get(username, (err, row) => {
     if (row === undefined) {
       res.status(400).send({message: "No user found"});
       return;

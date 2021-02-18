@@ -27,7 +27,7 @@ function addToken(username) {
 	return value;
 }
 
-//Checks that a token is valid
+//Checks that a token is valid for a given user
 //returns true or false
 function checkToken(username, value) {
 	if (!username in tokens) return false;
@@ -47,5 +47,11 @@ function checkToken(username, value) {
 	return true;
 }
 
+//Checks that a token is valid for any user
+function validToken(value) {
+	return tokens.some(token => token.value === value);
+}
+
 module.exports.addToken = addToken;
 module.exports.checkToken = checkToken;
+module.exports.validToken = validToken;

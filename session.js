@@ -30,9 +30,10 @@ function addToken(username) {
 //Checks that a token is valid for a given user
 //returns true or false
 function checkToken(username, value) {
-	if (!username in tokens) return false;
-	
 	let token = tokens[username];
+
+	//No session for that user
+	if (token === undefined) return false;
 
 	//Token expired
 	if (token.expiry < Date.now()) return false;

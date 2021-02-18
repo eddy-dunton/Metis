@@ -40,8 +40,14 @@ app.use(express.json());
   And https://github.com/mapbox/node-sqlite3/wiki/API for the SQLite documentation
 */
 
-const SQL_CREATEUSER_FIND_INSTITUTION = db.prepare("SELECT InstitutionId FROM Institution WHERE Domain = ?");
-const SQL_CREATEUSER_INSERT_USER = db.prepare("INSERT INTO User (Username, Password, Email, InstitutionId) VALUES (?,?,?,?);");
+const SQL_CREATEUSER_FIND_INSTITUTION = db.prepare(`
+  SELECT InstitutionId 
+    FROM Institution 
+    WHERE Domain = ?;`);
+
+const SQL_CREATEUSER_INSERT_USER = db.prepare(`
+  INSERT INTO User (Username, Password, Email, InstitutionId) 
+    VALUES (?,?,?,?);`);
 
 //Create user
 app.post('/createUser', (req, res) => {
@@ -85,7 +91,10 @@ app.post('/createUser', (req, res) => {
   });
 });
 
-const SQL_ISUSER = db.prepare('SELECT Username, Password FROM User WHERE (Username = ? OR Email = ?)');
+const SQL_ISUSER = db.prepare(`
+  SELECT Username, Password 
+    FROM User 
+    WHERE (Username = ? OR Email = ?);`);
 
 //authorization
 app.post('/isUser', async (req, res) => {
@@ -134,29 +143,66 @@ app.post('/isUser', async (req, res) => {
 });
 
 
-const SQL_GETUSERPREVIEW = db.prepare("SELECT User.Score, Institution.Name FROM User NATURAL JOIN Institution WHERE User.Username = ?");
+const SQL_GETUSERPREVIEW = db.prepare(`
+  SELECT User.Score, Institution.Name 
+    FROM User 
+      NATURAL JOIN Institution 
+    WHERE User.Username = ?;`);
 
 app.get("/getUserPreview/:username&token=:token", async (req, res) =>{
   const username = req.params.username;
   const token = req.params.token;
 
   if (username === undefined || !regexUsername.test(username)) {
-    res.status(400).send({message: "No / Invalid username"});
+    res.status(400).send({error: "No / Invalid username"});
     return;
   }
 
   if (!session.validToken(token)) {
-    res.status(400).send({message: "Invalid login"});
+    res.status(400).send({error: "Invalid login"});
     return;
   }
 
   SQL_GETUSERPREVIEW.get(username, (err, row) => {
     if (row === undefined) {
-      res.status(400).send({message: "No user found"});
+      res.status(400).send({error: "No user found"});
       return;
     }
 
     res.status(200).send({username: username, score: row.Score, inst: row.Name});
+  });
+});
+
+const SQL_GETUSERBROWSING_UNITS = db.prepare(`
+  SELECT UnitCode, UnitName 
+    FROM Unit 
+      JOIN UnitEnrollment 
+        ON Unit.UnitId = UnitEnrollment.UnitId
+      JOIN User 
+        ON User.UserId = UnitEnrollment.UserId 
+        AND Username = ?;`);
+
+app.get("/getUserBrowsing/:username&token=:token", async (req, res) => {
+  const username = req.params.username;
+  const token = req.params.token;
+
+  if (username === undefined || !regexUsername.test(username)) {
+    res.status(400).send({error: "No / Invalid username"});
+    return;
+  }
+
+  if (!session.checkToken(username, token)) {
+    res.status(400).send({error: "Invalid login"});
+    return;
+  }
+
+  SQL_GETUSERBROWSING_UNITS.all(username, async (err, rows) => {
+    if (rows === undefined) {
+      res.status(400).send({error: "SQL_GETUSERBROWSING_UNITS Failed, this shouldn't happen"});
+      return;
+    }
+
+    res.status(200).send({units: rows})
   });
 });
 

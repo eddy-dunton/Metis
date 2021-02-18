@@ -49,7 +49,7 @@ function checkToken(username, value) {
 
 //Checks that a token is valid for any user
 function validToken(value) {
-	return tokens.some(token => token.value === value);
+	return Object.values(tokens).some(token => token.value === value);
 }
 
 module.exports.addToken = addToken;

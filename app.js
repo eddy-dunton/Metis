@@ -206,4 +206,38 @@ app.get("/getUserBrowsing/:username&token=:token", async (req, res) => {
   });
 });
 
+//We aren't storing courses. Should it provide list of modules? 
+//Also, we are not storing the number of comments/downloads/module under a post
+const SQL_GETUSERINFO = db.prepare(`
+  SELECT Institution.Name, User.Score, User.Username, User.Biography, Post.Title, Post.Score, Post.Description
+    FROM User 
+      NATURAL JOIN Institution 
+      JOIN Post ON User.UserId = Post.UserId
+    WHERE User.Username = ?;`);    
+
+app.get("/getUserInfo/username&token=:token", async (req, res) =>{
+
+  const username = req.params.username;
+  const token = req.params.token;
+
+  if (username === undefined || !regexUsername.test(username)) {
+    res.status(400).send({error: "No / Invalid username"});
+    return;
+  }
+
+  if (!session.validToken(token)) {
+    res.status(400).send({error: "Invalid login"});
+    return;
+  }
+
+  SQL_GETUSERINFO.all(username, async (err, row) => {
+    if (row === undefined) {
+      res.status(400).send({error: "No such user found"});
+      return;
+    }
+
+    res.status(200).send({rows})
+  });
+});
+
 app.listen(3000, () => console.log("Listening"));

@@ -13,8 +13,6 @@ class Navbar extends React.Component {
         this.state = {
             loading: true,
             profile: null,
-            username:props.username,
-            token:props.token,
             loggedIn:props.loggedIn,
         };
         this.loginCallback = props.loginCallback;
@@ -22,31 +20,28 @@ class Navbar extends React.Component {
         this.uploadCallback = props.uploadCallback;
         this.getProfileInfo = this.getProfileInfo.bind(this);
     }
-    async getProfileInfo() {
-        if (this.state.loggedIn){
-            const response = await fetch("/getUserPreview/"+this.state.username+"&token="+this.state.token);
-            const resdata = await response.json();
-            if (resdata.username){
-                this.setState({ profile: resdata,loading: false,loggedIn:true})
-                console.log(this.state)
-            } else {
-                this.failCallback()
-                this.setState({ profile: null,loading: true,loggedIn:false})
-            }
+    async getProfileInfo(username, token) {
+        let response = await fetch("/getUserPreview/"+username+"&token="+token);
+        let resdata = await response.json();
+        if (resdata.username){
+            this.setState({ profile: resdata,loading: false,loggedIn:true})
         } else {
+            this.failCallback()
             this.setState({ profile: null,loading: true,loggedIn:false})
         }
     }
     componentDidMount() {
         if (this.props.loggedIn){
             this.setState({ loggedIn: this.props.loggedIn })
-            this.getProfileInfo()
+            this.getProfileInfo(this.props.username, this.props.token)
         }
     }
     componentDidUpdate(prevProps) {
         if (prevProps.loggedIn !== this.props.loggedIn){
-            this.setState({ loggedIn: this.props.loggedIn,username:this.props.username,token:this.props.token })
-            this.getProfileInfo()
+            if (this.props.loggedIn){
+                this.setState({ loggedIn: this.props.loggedIn })
+                this.getProfileInfo(this.props.username, this.props.token)
+            }
         }
     }
     render() {

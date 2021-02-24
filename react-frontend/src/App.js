@@ -211,9 +211,7 @@ class App extends React.Component {
                 this.error(document.getElementById("password"),resjson.error)
             }
         } else {
-            console.log(resjson)
             this.setState({ token: resjson.token, username:resjson.username,loggedIn : true});
-            console.log(this.state)
             this.cookies.set('token', resjson.token, { path: '/' });
             this.cookies.set('username', resjson.username, { path: '/' });
             this.login()

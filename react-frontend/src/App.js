@@ -1,5 +1,6 @@
 import React from 'react';
 import { Route, Switch, Link } from 'react-router-dom'
+import Cookies from 'universal-cookie';
 
 //https://blog.logrocket.com/react-router-dom-set-up-essential-components-parameterized-routes-505dc93642f1/
 
@@ -17,19 +18,21 @@ const bcrypt = require("bcryptjs")
 class App extends React.Component {
     constructor(props) {
         super(props);
-
+        this.cookies = new Cookies();
         this.state = {
-            token: null,
-            username: null,
-            loggedIn: false,
+            token: this.cookies.get('token'),
+            username: this.cookies.get('username'),
+            loggedIn: this.cookies.get('token') ? true : false,
             showLogin: false,
             showUpload: false,
             currentTab:'signin'
         };
+
         this.login = this.login.bind(this);
         this.upload = this.upload.bind(this);
         this.fileUploaded = this.fileUploaded.bind(this);
         this.setCurrentTab = this.setCurrentTab.bind(this);
+        this.failedRequest = this.failedRequest.bind(this);
         this.signin = this.signin.bind(this);
         this.hashPassword = this.hashPassword.bind(this);
         this.createAccount = this.createAccount.bind(this);
@@ -94,7 +97,7 @@ class App extends React.Component {
     }
 
     setCurrentTab(cur) {
-       this.inputs = [document.getElementById("username"),document.getElementById("password")]
+        this.inputs = [document.getElementById("username"),document.getElementById("password")]
         if (document.getElementById("email")){
             this.inputs.push(document.getElementById("email"))
         }
@@ -160,15 +163,26 @@ class App extends React.Component {
         });
         let resjson = await response.json()
         if (resjson.error){
+            let displayedError = false
             if (resjson.error.toLowerCase().includes("password")){
                 this.error(document.getElementById("password"),resjson.error)
-            } else if (resjson.error.toLowerCase().includes("email")){
+                displayedError = true
+            }
+            if (resjson.error.toLowerCase().includes("email")){
                 this.error(document.getElementById("email"),resjson.error)
-            } else {
+                displayedError = true
+            }
+            if (resjson.error.toLowerCase().includes("username")){
+                this.error(document.getElementById("username"),resjson.error)
+                displayedError = true
+            }
+            if (!displayedError){
                 this.error(document.getElementById("username"),resjson.error)
             }
         } else {
             this.setState({ token: resjson.token, username:this.username, loggedIn : true});
+            this.cookies.set('token', resjson.token, { path: '/' });
+            this.cookies.set('username', this.username, { path: '/' });
             this.login()
         }
     }
@@ -187,16 +201,30 @@ class App extends React.Component {
         });
         let resjson = await response.json()
         if (resjson.error){
+            let displayedError = false
             if (resjson.error.toLowerCase().includes("password")){
                 this.error(document.getElementById("password"),resjson.error)
-            } else {
+                displayedError = true
+            }
+            if (resjson.error.toLowerCase().includes("username")){
+                this.error(document.getElementById("username"),resjson.error)
+                displayedError = true
+            }
+            if (!displayedError){
                 this.error(document.getElementById("username"),resjson.error)
             }
-            console.log(resjson.error)
         } else {
             this.setState({ token: resjson.token, username:this.username,loggedIn : true});
+            this.cookies.set('token', resjson.token, { path: '/' });
+            this.cookies.set('username', this.username, { path: '/' });
             this.login()
         }
+    }
+
+    failedRequest(){
+        this.setState({ token:'' , username: '', loggedIn: false});
+        this.cookies.remove('username')
+        this.cookies.remove('token') 
     }
 
     login(e) {
@@ -226,7 +254,7 @@ class App extends React.Component {
     render() {
         return (
             <div className="app">
-                <Navbar token={this.state.token} loggedIn={this.state.loggedIn} uploadCallback={this.upload} loginCallback={this.login} />
+                <Navbar token={this.state.token} failCallback={this.failedRequest} username={this.state.username} loggedIn={this.state.loggedIn} uploadCallback={this.upload} loginCallback={this.login} />
                 {/* modal is initially hidden and shown when this.login is called */}
                 <Modal show={this.state.showLogin} handleClose={this.login}>
                     {/* sets up the tab buttons */}

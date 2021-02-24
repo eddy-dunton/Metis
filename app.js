@@ -209,7 +209,7 @@ app.get("/getUserBrowsing/:username&token=:token", async (req, res) => {
 //We aren't storing courses. Should it provide list of modules? 
 //Also, we are not storing the number of comments/downloads/module under a post
 const SQL_GETUSERINFO = db.prepare(`
-  SELECT Institution.Name, User.Score, User.Username, User.Biography, Post.Title, Post.Score, Post.Description
+  SELECT Institution.Name, User.Score, User.Username, User.Biography, Post.Title, Post.Pens, Post.Description
     FROM User 
       NATURAL JOIN Institution 
       JOIN Post ON User.UserId = Post.UserId

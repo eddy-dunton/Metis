@@ -2,6 +2,8 @@ import React from 'react';
 import { Route, Switch, Link } from 'react-router-dom'
 import Cookies from 'universal-cookie';
 
+import sha256 from 'crypto-js/sha256';
+
 //https://blog.logrocket.com/react-router-dom-set-up-essential-components-parameterized-routes-505dc93642f1/
 
 import './App.css';
@@ -13,7 +15,6 @@ import Modal from './components/Modal.js';
 import Profile from './Profile.js';
 import UploadArea from './components/UploadArea.js';
 
-const bcrypt = require("bcryptjs")
 
 class App extends React.Component {
     constructor(props) {
@@ -86,14 +87,8 @@ class App extends React.Component {
     }
 
     async hashPassword(password){
-        this.saltRounds = 10; 
-        this.hashedPassword = await new Promise((resolve, reject) => {
-            bcrypt.hash(password, this.saltRounds, function(err, hash) {
-                if (err) reject(err)
-                resolve(hash)
-            });
-        })
-        return this.hashedPassword
+        let hashedPassword = sha256(password)
+        return hashedPassword.toString()
     }
 
     setCurrentTab(cur) {
@@ -178,6 +173,7 @@ class App extends React.Component {
             }
             if (!displayedError){
                 this.error(document.getElementById("username"),resjson.error)
+                this.error(document.getElementById("password"),resjson.error)
             }
         } else {
             this.setState({ token: resjson.token, username:this.username, loggedIn : true});
@@ -212,11 +208,14 @@ class App extends React.Component {
             }
             if (!displayedError){
                 this.error(document.getElementById("username"),resjson.error)
+                this.error(document.getElementById("password"),resjson.error)
             }
         } else {
-            this.setState({ token: resjson.token, username:this.username,loggedIn : true});
+            console.log(resjson)
+            this.setState({ token: resjson.token, username:resjson.username,loggedIn : true});
+            console.log(this.state)
             this.cookies.set('token', resjson.token, { path: '/' });
-            this.cookies.set('username', this.username, { path: '/' });
+            this.cookies.set('username', resjson.username, { path: '/' });
             this.login()
         }
     }

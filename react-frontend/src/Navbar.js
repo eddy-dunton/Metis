@@ -23,21 +23,19 @@ class Navbar extends React.Component {
         this.getProfileInfo = this.getProfileInfo.bind(this);
     }
     async getProfileInfo() {
-        console.log(this.state)
-        const response = await fetch("/getUserPreview/"+this.state.username+"&token="+this.state.token);
-        const resdata = await response.json();
-        if (resdata.username){
-            this.setState({ profile: resdata,loading: false,loggedIn:true})
+        if (this.state.loggedIn){
+            const response = await fetch("/getUserPreview/"+this.state.username+"&token="+this.state.token);
+            const resdata = await response.json();
+            if (resdata.username){
+                this.setState({ profile: resdata,loading: false,loggedIn:true})
+                console.log(this.state)
+            } else {
+                this.failCallback()
+                this.setState({ profile: null,loading: true,loggedIn:false})
+            }
         } else {
-            this.failCallback()
             this.setState({ profile: null,loading: true,loggedIn:false})
         }
-        /*const resdata = { 
-            "picture": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.watsonmartin.com%2Fwp-content%2Fuploads%2F2016%2F03%2Fdefault-profile-picture.jpg",
-            "inst": "University of Bath",
-            "username":"John Smith",
-            "score": 257
-        } */
     }
     componentDidMount() {
         if (this.props.loggedIn){
@@ -47,7 +45,7 @@ class Navbar extends React.Component {
     }
     componentDidUpdate(prevProps) {
         if (prevProps.loggedIn !== this.props.loggedIn){
-            this.setState({ loggedIn: this.props.loggedIn })
+            this.setState({ loggedIn: this.props.loggedIn,username:this.props.username,token:this.props.token })
             this.getProfileInfo()
         }
     }
@@ -71,7 +69,7 @@ class Navbar extends React.Component {
                             <div className="navbar-profile">Loading...</div>
                         ) : (
                             <div className="navbar-profile">
-                                <img src={this.state.profile.picture} alt="Profile" />
+                                <img src={this.state.profile.picture} alt="Profile Pic" />
                                 <div className="navbar-profile-content" >
                                     <div className="navbar-profile-name">{this.state.profile.username}</div>
                                     <div className="navbar-profile-uni">{this.state.profile.inst}</div>

@@ -201,7 +201,7 @@ const SQL_GETUSERINFO = db.prepare(`
       JOIN Post ON User.UserId = Post.UserId
     WHERE User.Username = ?;`);    
 
-app.get("/getUserInfo/username&token=:token", async (req, res) =>{
+app.get("/getUserInfo/:username&token=:token", async (req, res) =>{
   const username = req.params.username;
   const token = req.params.token;
 
@@ -211,8 +211,8 @@ app.get("/getUserInfo/username&token=:token", async (req, res) =>{
   if (!session.validToken(token))
     return res.status(400).send({error: "Invalid login"});
 
-  SQL_GETUSERINFO.all(username, async (err, row) => {
-    if (row === undefined) 
+  SQL_GETUSERINFO.all(username, async (err, rows) => {
+    if (rows === undefined) 
       return res.status(400).send({error: "No such user found"});
 
     res.status(200).send({rows})

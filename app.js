@@ -1,8 +1,10 @@
 //Imports
 const express = require("express");
+const fileUpload = require("express-fileupload");
 const sqlite3 = require("sqlite3");
 const mailValidator = require("email-validator");
 const bcrypt = require("bcrypt");
+const sha1 = require("js-sha1");
 
 const session = require("./session");
 
@@ -13,10 +15,22 @@ console.log("Connected to db!");
 
 const app = express();
 
-const regexUsername = /^[\w]{1,32}$/
+//Constants live here
+const REGEX_USERNAME = /^[\w]{1,32}$/
+const REGEX_UNITCODE = /^[\w]{4,8}$/ //I think this is right
+const REGEX_TITLE = /^[\w]{1,64}$/
+const REGEX_DESCRIPTION = /^[\w]{1,256}$/
+const UPLOAD_SIZE_LIMIT = 25 * 1024 * 1024;
 
-//Sets up the app to serve files the public folder
+
+//Sets up the app to serve files from the public folder
 app.use(express.static("react-frontend/build"));
+app.use(fileUpload({
+    limits: {fileSize: UPLOAD_SIZE_LIMIT},
+    createParentPath: true,
+    abortOnLimit: true,
+  }));
+
 app.use(express.json());
 
 /*
@@ -56,37 +70,30 @@ app.post('/createUser', (req, res) => {
   const password = req.body.passwordHash;
 
   //Check if params are missing
-  if (email === undefined || !mailValidator.validate(email)) {
-    res.status(400).send({message: "No / Invalid email"});
-    return;
-  }
-  if (username === undefined || !regexUsername.test(username)) {
-    res.status(400).send({message: "No / Invalid username"});
-    return;
-  }
-  if (password === undefined) {
-    res.status(400).send({message: "No password"});
-    return;
-  }
+  if (email === undefined || !mailValidator.validate(email))
+    return res.status(400).send({message: "No / Invalid email"});
+
+  if (username === undefined || !REGEX_USERNAME.test(username))
+    return res.status(400).send({message: "No / Invalid username"});
+
+  if (password === undefined)
+    return res.status(400).send({message: "No password"});
 
   //Find institution
   const instDomain = email.split("@")[1];
   SQL_CREATEUSER_FIND_INSTITUTION.get(instDomain, async (err, row) => {
     //Checks that a valid institution has been found
-    if (row === undefined) {
-      res.status(400).send({error: "Not a valid university email"});
-      return;
-    }
+    if (row === undefined) 
+      return res.status(400).send({error: "Not a valid university email"});
 
     //Generate salt and then hash password
     const hash = await bcrypt.hash(password, 10);
 
     SQL_CREATEUSER_INSERT_USER.run(username, hash, email, row.InstitutionId, (err) => {
-      if (err === null) { //Account successfully created
+      if (err === null) //Account successfully created 
         res.status(200).send({token: session.addToken(username)});
-      } else { //Email / Username already taken
+      else //Email / Username already taken
         res.status(400).send({error: "Email / Username already taken"});
-      }
     });
   });
 });
@@ -104,24 +111,19 @@ app.post('/isUser', async (req, res) => {
 
   //Check if params are missing
   //This may yet need some tweaks to stop SQL injection
-  if (username === undefined || !regexUsername.test(username)) {
-    if (email === undefined) {
-      res.status(400).send({error: "No username or email field" });
-      return;
-    } else {
+  if (username === undefined || !REGEX_USERNAME.test(username)) {
+    if (email === undefined)
+      return res.status(400).send({error: "No username or email field" });
+    else {
       //Check for invalid email
-      if (!mailValidator.validate(email)) {
-        res.status(400).send({error: "Email Invalid"});
-        return;
-      }
+      if (!mailValidator.validate(email))
+        return res.status(400).send({error: "Email Invalid"});
     }
   }
     
   //password is hashed on front-end 
-  if (password === undefined) {
-      res.status(400).send({error: "No password field" });
-      return;
-  }
+  if (password === undefined)
+    return res.status(400).send({error: "No password field" });
 
   //need for SQL injection check?
   //Replace undefined parameters with blanks
@@ -130,10 +132,8 @@ app.post('/isUser', async (req, res) => {
     email !== undefined ? email : ""];
 
   SQL_ISUSER.get(params, (err, row) => {
-    if (row === undefined) {
-      res.status(400).send({error: 'Invalid credentials'});
-      return;
-    }
+    if (row === undefined)
+      return res.status(400).send({error: 'Invalid credentials'});
 
     bcrypt.compare(password, row.Password, (err, result) =>{
       if (result) res.status(200).send({username: row.Username, token: session.addToken(username)});
@@ -153,21 +153,15 @@ app.get("/getUserPreview/:username&token=:token", async (req, res) =>{
   const username = req.params.username;
   const token = req.params.token;
 
-  if (username === undefined || !regexUsername.test(username)) {
-    res.status(400).send({error: "No / Invalid username"});
-    return;
-  }
+  if (username === undefined || !REGEX_USERNAME.test(username))
+    return res.status(400).send({error: "No / Invalid username"});
 
-  if (!session.validToken(token)) {
-    res.status(400).send({error: "Invalid login"});
-    return;
-  }
+  if (!session.validToken(token))
+    return res.status(400).send({error: "Invalid login"});
 
   SQL_GETUSERPREVIEW.get(username, (err, row) => {
-    if (row === undefined) {
-      res.status(400).send({error: "No user found"});
-      return;
-    }
+    if (row === undefined)
+      return res.status(400).send({error: "No user found"});
 
     res.status(200).send({username: username, score: row.Score, inst: row.Name});
   });
@@ -186,28 +180,20 @@ app.get("/getUserBrowsing/:username&token=:token", async (req, res) => {
   const username = req.params.username;
   const token = req.params.token;
 
-  if (username === undefined || !regexUsername.test(username)) {
-    res.status(400).send({error: "No / Invalid username"});
-    return;
-  }
+  if (username === undefined || !REGEX_USERNAME.test(username))
+    return res.status(400).send({error: "No / Invalid username"});
 
-  if (!session.checkToken(username, token)) {
-    res.status(400).send({error: "Invalid login"});
-    return;
-  }
+  if (!session.checkToken(username, token))
+    return res.status(400).send({error: "Invalid login"});
 
   SQL_GETUSERBROWSING_UNITS.all(username, async (err, rows) => {
-    if (rows === undefined) {
-      res.status(400).send({error: "SQL_GETUSERBROWSING_UNITS Failed, this shouldn't happen"});
-      return;
-    }
+    if (rows === undefined)
+      return res.status(400).send({error: "SQL_GETUSERBROWSING_UNITS Failed, this shouldn't happen"});
 
     res.status(200).send({units: rows})
   });
 });
 
-//We aren't storing courses. Should it provide list of modules? 
-//Also, we are not storing the number of comments/downloads/module under a post
 const SQL_GETUSERINFO = db.prepare(`
   SELECT Institution.Name, User.Score, User.Username, User.Biography, Post.Title, Post.Pens, Post.Description
     FROM User 
@@ -216,28 +202,71 @@ const SQL_GETUSERINFO = db.prepare(`
     WHERE User.Username = ?;`);    
 
 app.get("/getUserInfo/username&token=:token", async (req, res) =>{
-
   const username = req.params.username;
   const token = req.params.token;
 
-  if (username === undefined || !regexUsername.test(username)) {
-    res.status(400).send({error: "No / Invalid username"});
-    return;
-  }
+  if (username === undefined || !REGEX_USERNAME.test(username)) 
+    return res.status(400).send({error: "No / Invalid username"});
 
-  if (!session.validToken(token)) {
-    res.status(400).send({error: "Invalid login"});
-    return;
-  }
+  if (!session.validToken(token))
+    return res.status(400).send({error: "Invalid login"});
 
   SQL_GETUSERINFO.all(username, async (err, row) => {
-    if (row === undefined) {
-      res.status(400).send({error: "No such user found"});
-      return;
-    }
+    if (row === undefined) 
+      return res.status(400).send({error: "No such user found"});
 
     res.status(200).send({rows})
   });
+});
+
+SQL_UPLOADFILE_INSERT = db.prepare(`
+    INSERT INTO Post (Title, UserId, File, Description, UnitId) 
+    SELECT ?, User.UserId, ?, ?, Unit.UnitId
+    FROM Unit	
+      JOIN UnitEnrollment 
+        ON Unit.UnitId = UnitEnrollment.UnitId 
+      JOIN User 
+        ON User.UserId = UnitEnrollment.UserId
+    WHERE Username = ? AND UnitCode = ?
+  `);
+
+app.post("/uploadFile", async (req, res) => {
+  const username = req.body.username;
+  const token = req.body.token;
+  const unitcode = req.body.unitcode;
+  const title = req.body.title;
+  const description = req.body.description;
+
+  if (username === undefined || !REGEX_USERNAME.test(username)) 
+    return res.status(400).send("No / Invalid username");
+
+  if (!session.checkToken(username, token)) 
+    return res.status(400).send("Invalid login");
+
+  if (!REGEX_UNITCODE.test(unitcode))
+    return res.status(400).send("Invalid unitcode");
+
+  if (!REGEX_TITLE.test(title)) 
+    return res.status(400).send("Invalid title");
+
+  if (!REGEX_DESCRIPTION.test(description)) 
+    return res.status(400).send("Invalid description");
+
+  if (!req.files || Object.keys(req.files).length === 0) 
+    return res.status(400).send("No files were uploaded");
+
+  if (!file.name.toLowerCase().endsWith(".pdf"))
+    return res.status(400).send("File not a pdf");
+
+  const file = req.files.upload;
+  const newName = `files/${username}/${sha1(file.name)}-${Date.now().toString()}.pdf`; //Add timestamp
+  SQL_UPLOADFILE_INSERT.run((title, newName, description, username, unitcode), (err) => {
+    if (err === null) { //Worked
+
+    } else {
+      return res.status(500).send("Database Error");
+    }
+  })
 });
 
 app.listen(3000, () => console.log("Listening"));

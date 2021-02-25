@@ -220,15 +220,20 @@ app.get("/getUserInfo/username&token=:token", async (req, res) =>{
 });
 
 SQL_UPLOADFILE_INSERT = db.prepare(`
-    INSERT INTO Post (Title, UserId, File, Description, UnitId) 
-    SELECT ?, User.UserId, ?, ?, Unit.UnitId
-    FROM Unit	
-      JOIN UnitEnrollment 
-        ON Unit.UnitId = UnitEnrollment.UnitId 
-      JOIN User 
-        ON User.UserId = UnitEnrollment.UserId
-    WHERE Username = ? AND UnitCode = ?
-  `);
+  INSERT INTO Post (Title, UserId, File, Description, UnitId) 
+  SELECT ?, User.UserId, ?, ?, Unit.UnitId
+  FROM Unit	
+    JOIN UnitEnrollment 
+      ON Unit.UnitId = UnitEnrollment.UnitId 
+    JOIN User 
+      ON User.UserId = UnitEnrollment.UserId
+  WHERE Username = ? AND UnitCode = ?
+`);
+
+SQL_UPLOADFILE_ROLLBACK = db.prepare(`
+  REMOVE FROM Post
+  WHERE File = ?
+`);
 
 app.post("/uploadFile", async (req, res) => {
   const username = req.body.username;
@@ -259,12 +264,18 @@ app.post("/uploadFile", async (req, res) => {
     return res.status(400).send("File not a pdf");
 
   const file = req.files.upload;
-  const newName = `files/${username}/${sha1(file.name)}-${Date.now().toString()}.pdf`; //Add timestamp
-  SQL_UPLOADFILE_INSERT.run((title, newName, description, username, unitcode), (err) => {
+  const filename = `files/${username}/${sha1(file.name)}-${Date.now().toString()}.pdf`; //Add timestamp
+  SQL_UPLOADFILE_INSERT.run((title, filename, description, username, unitcode), (err) => {
     if (err === null) { //Worked
-
+      file.mv(filename, (err) => {
+        if (err) { //Error occured, reroll the database changes
+          SQL_UPLOADFILE_ROLLBACK.run(filename);
+          res.status(500).send("File store error");
+        }
+        res.status(200).send(filename)
+      });
     } else {
-      return res.status(500).send("Database Error");
+      res.status(400).send("User or Unitcode incorrect");
     }
   })
 });

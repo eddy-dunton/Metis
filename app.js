@@ -194,28 +194,48 @@ app.get("/getUserBrowsing/:username&token=:token", async (req, res) => {
   });
 });
 
-const SQL_GETUSERINFO = db.prepare(`
-  SELECT Institution.Name, User.Score, User.Username, User.Biography, Post.Title, Post.Pens, Post.Description
-    FROM User 
-      NATURAL JOIN Institution 
-      JOIN Post ON User.UserId = Post.UserId
-    WHERE User.Username = ?;`);    
+//Gets a users data
+const SQL_GETUSERINFO_USER = db.prepare(`
+  SELECT Institution.Name, User.Score, User.Biography
+  FROM User 
+    NATURAL JOIN Institution
+  WHERE User.Username = ?;`);    
+
+//Gets all of a users posts
+const SQL_GETUSERINFO_POSTS = db.prepare(`
+  SELECT Title, File, Pens, Description, Downloads, UnitCode, UnitName
+  FROM User 
+    JOIN Post ON User.UserId = Post.UserId
+    JOIN Unit ON Post.UnitId = Unit.UnitId
+  WHERE User.Username = ?;`)
 
 app.get("/getUserInfo/:username&token=:token", async (req, res) =>{
   const username = req.params.username;
   const token = req.params.token;
 
   if (username === undefined || !REGEX_USERNAME.test(username)) 
-    return res.status(400).send({error: "No / Invalid username"});
+    return res.status(400).send("No / Invalid username");
 
   if (!session.validToken(token))
-    return res.status(400).send({error: "Invalid login"});
+    return res.status(400).send("Invalid login");
 
-  SQL_GETUSERINFO.all(username, async (err, rows) => {
-    if (rows === undefined) 
-      return res.status(400).send({error: "No such user found"});
+  SQL_GETUSERINFO_USER.get(username, async (err, row) => {
+    if (row === undefined)
+      return res.status(400).send("No user found");
 
-    res.status(200).send({rows})
+    let user = {inst: row.Name, score: row.Score, bio: row.Biography, posts:[]};
+
+    SQL_GETUSERINFO_POSTS.all(username, async (err, rows) => {
+      if (rows === undefined)
+        return res.status(500).send("Database failure");
+
+      //Add all posts to ouput
+      rows.forEach(row => user.posts.push({
+        title: row.Title, filepath: row.File, pens: row.Pens, desc: row.Description, downloads: row.Downloads,
+        unit: row.UnitName, unitcode: row.UnitCode}));
+      
+      res.status(200).send(user);
+    })
   });
 });
 

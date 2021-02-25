@@ -231,7 +231,7 @@ const SQL_CREATEPOST_INSERT = db.prepare(`
 `);
 
 const SQL_CREATEPOST_ROLLBACK = db.prepare(`
-  REMOVE FROM Post
+  DELETE FROM Post
   WHERE File = ?
 `);
 

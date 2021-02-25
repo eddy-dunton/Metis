@@ -1,0 +1,110 @@
+/*
+Colors!!
+c4b6b6
+7e7474
+555555
+
+
+*/
+
+.fit-div {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.header-text {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 50px;
+  display:inline-block;
+}
+
+.content-text {
+  font-family: 'Alegreya Sans';
+  font-size: 24px;
+
+}
+
+.top-panel {
+  height: 500px;
+  color: #FFFFFF;
+  background-color: #555555;
+  margin: 15px 15px 0px 15px;
+  border-radius: 40px 40px 5px 5px;
+  padding: 20px 20px 40px 20px ;
+
+}
+
+.mid-panel {
+  height: 500px;
+  color: #FFFFFF;
+  background-color: #7e7474;
+  margin: 0px 15px 0 15px;
+  border-radius: 5px;
+
+  padding: 20px ;
+
+}
+
+.bot-panel {
+  height: 500px;
+  color: #FFFFFF;
+  background-color: #c4b6b6;
+  margin: 0px 15px 0 15px;
+  border-radius: 5px 5px 40px 40px;
+  padding: 20px ;
+}
+
+.no-margin {
+  margin: 0px;
+}
+
+.image-panel {
+  display: inline-block;
+  /*background-color: #E5E5E5; */
+  width:50%;
+  height: 100%;
+  word-wrap: break-word;
+  vertical-align: top;
+}
+
+.image-panel > img {
+  border-radius: 10px;
+}
+
+.signin-panel{
+  padding: 20px 0 0 0;
+  display: inline-block;
+  width: 50%;
+  height: 100%;
+  word-wrap: break-word;
+  vertical-align: top;
+  background-color: #FFFFFF;
+  color: #000000;
+  border: 30px;
+  border-radius: 20px 20px 20px 20px;
+
+}
+.signin-panel > button {
+  background-color:#E5E5E5;
+}
+.inline {
+
+}
+
+
+.text-panel {
+  display: inline-block;
+  width: 50%;
+  height: 100%;
+  word-wrap: break-word;
+  vertical-align: top;
+}
+.text-panel > p {
+  margin: 30px 30px 30px 5px ;
+  text-size: 30px;
+}
+.text-panel > img {
+  width:100px;
+  height: 100px;
+  display: inline-block;
+}

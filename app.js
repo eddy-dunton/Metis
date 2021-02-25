@@ -219,7 +219,7 @@ app.get("/getUserInfo/username&token=:token", async (req, res) =>{
   });
 });
 
-SQL_UPLOADFILE_INSERT = db.prepare(`
+const SQL_CREATEPOST_INSERT = db.prepare(`
   INSERT INTO Post (Title, UserId, File, Description, UnitId) 
   SELECT ?, User.UserId, ?, ?, Unit.UnitId
   FROM Unit	
@@ -230,12 +230,12 @@ SQL_UPLOADFILE_INSERT = db.prepare(`
   WHERE Username = ? AND UnitCode = ?
 `);
 
-SQL_UPLOADFILE_ROLLBACK = db.prepare(`
+const SQL_CREATEPOST_ROLLBACK = db.prepare(`
   REMOVE FROM Post
   WHERE File = ?
 `);
 
-app.post("/uploadFile", async (req, res) => {
+app.post("/createPost", async (req, res) => {
   const username = req.body.username;
   const token = req.body.token;
   const unitcode = req.body.unitcode;
@@ -265,11 +265,11 @@ app.post("/uploadFile", async (req, res) => {
 
   const file = req.files.upload;
   const filename = `files/${username}/${sha1(file.name)}-${Date.now().toString()}.pdf`; //Add timestamp
-  SQL_UPLOADFILE_INSERT.run((title, filename, description, username, unitcode), (err) => {
+  SQL_CREATEPOST_INSERT.run((title, filename, description, username, unitcode), (err) => {
     if (err === null) { //Worked
       file.mv(filename, (err) => {
         if (err) { //Error occured, reroll the database changes
-          SQL_UPLOADFILE_ROLLBACK.run(filename);
+          SQL_CREATEPOST_ROLLBACK.run(filename);
           res.status(500).send("File store error");
         }
         res.status(200).send(filename)

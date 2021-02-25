@@ -221,7 +221,7 @@ class App extends React.Component {
     failedRequest(){
         this.setState({ token:'' , username: '', loggedIn: false});
         this.cookies.remove('username')
-        this.cookies.remove('token') 
+        this.cookies.remove('token')
     }
 
     login(e) {
@@ -249,6 +249,7 @@ class App extends React.Component {
 
     //<Route path="/" component={} />
     render() {
+      if(this.state.loggedIn){
         return (
             <div className="app">
                 <Navbar token={this.state.token} failCallback={this.failedRequest} username={this.state.username} loggedIn={this.state.loggedIn} uploadCallback={this.upload} loginCallback={this.login} />
@@ -257,7 +258,7 @@ class App extends React.Component {
                     {/* sets up the tab buttons */}
                     <div className="tabs">
                         {this.signInTabs.map((tab, i) => (
-                            <button 
+                            <button
                                 key={i}
                                 onClick={() => this.setCurrentTab(tab.name)} 
                                 className={`clickable ${(tab.name === this.state.currentTab) ? 'active' : ''}`}>
@@ -280,6 +281,30 @@ class App extends React.Component {
                 </Switch>
             </div>
         );
+      }
+      else {
+        return(
+        <div>
+          <NotLoggedInPage loginCallback = {this.login} signInTabs = {this.signInTabs} currentTab = {this.currentTab} />
+          <Modal show={this.state.showLogin} handleClose={this.login}>
+              {/* sets up the tab buttons */}
+              <div className="tabs">
+                  {this.signInTabs.map((tab, i) => (
+                      <button
+                          key={i}
+                          onClick={() => this.setCurrentTab(tab.name)}
+                          className={`clickable ${(tab.name === this.state.currentTab) ? 'active' : ''}`}>
+                          {tab.label}
+                      </button>
+                  ))}
+              </div>
+              {/* line below draws signin/create account based on whats picked */}
+              { this.signInTabs.find(tab => tab.name === this.state.currentTab).content}
+          </Modal>
+        </div>
+        );
+      }
+
     }
 }
 

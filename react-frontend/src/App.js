@@ -14,6 +14,7 @@ import Reset from './reset-password.js';
 import Modal from './components/Modal.js';
 import Profile from './Profile.js';
 import UploadArea from './components/UploadArea.js';
+import NotLoggedInPage from './notLoggedIn.js'
 
 
 class App extends React.Component {
@@ -260,7 +261,7 @@ class App extends React.Component {
                         {this.signInTabs.map((tab, i) => (
                             <button
                                 key={i}
-                                onClick={() => this.setCurrentTab(tab.name)} 
+                                onClick={() => this.setCurrentTab(tab.name)}
                                 className={`clickable ${(tab.name === this.state.currentTab) ? 'active' : ''}`}>
                                 {tab.label}
                             </button>

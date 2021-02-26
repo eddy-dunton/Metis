@@ -3,8 +3,8 @@ import { Route, Switch, Link } from 'react-router-dom'
 
 //https://blog.logrocket.com/react-router-dom-set-up-essential-components-parameterized-routes-505dc93642f1/
 
-import './css/App.css';
-import './css/nlicss.css';
+import './App.css';
+import './nlicss.css';
 import logo from './images/logo.svg';
 import SUPic1 from './images/signUpPic1.png';
 import SUPic2 from './images/signUpPic2.png';

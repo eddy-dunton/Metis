@@ -1,4 +1,5 @@
 #!/bin/sh
+git checkout prod
 git pull
 npm i
 cd react-frontend

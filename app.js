@@ -29,6 +29,7 @@ app.use(fileUpload({
     limits: {fileSize: UPLOAD_SIZE_LIMIT},
     createParentPath: true,
     abortOnLimit: true,
+    useTempFiles: true,
   }));
 
 app.use(express.json());

@@ -18,8 +18,8 @@ const app = express();
 //Constants live here
 const REGEX_USERNAME = /^[\w]{1,32}$/
 const REGEX_UNITCODE = /^[\w]{4,8}$/ //I think this is right
-const REGEX_TITLE = /^[\w]{1,64}$/
-const REGEX_DESCRIPTION = /^[\w]{1,256}$/
+const REGEX_TITLE = /^[\w ]{1,64}$/
+const REGEX_DESCRIPTION = /^[\w\s]{0,256}$/
 const UPLOAD_SIZE_LIMIT = 25 * 1024 * 1024;
 
 
@@ -239,15 +239,19 @@ app.get("/getUserInfo/:username&token=:token", async (req, res) =>{
   });
 });
 
-const SQL_CREATEPOST_INSERT = db.prepare(`
-  INSERT INTO Post (Title, UserId, File, Description, UnitId) 
-  SELECT ?, User.UserId, ?, ?, Unit.UnitId
+const SQL_CREATEPOST_GETID = db.prepare(`
+  SELECT User.UserId, Unit.UnitId
   FROM Unit	
     JOIN UnitEnrollment 
       ON Unit.UnitId = UnitEnrollment.UnitId 
     JOIN User 
       ON User.UserId = UnitEnrollment.UserId
   WHERE Username = ? AND UnitCode = ?
+`);
+
+const SQL_CREATEPOST_INSERT = db.prepare(`
+  INSERT INTO Post (Title, UserId, File, Description, UnitId) 
+  VALUES (?, ?, ?, ?, ?)
 `);
 
 const SQL_CREATEPOST_ROLLBACK = db.prepare(`
@@ -268,36 +272,48 @@ app.post("/createPost", async (req, res) => {
   if (!session.checkToken(username, token)) 
     return res.status(400).send("Invalid login");
 
-  if (!REGEX_UNITCODE.test(unitcode))
+  if (unitcode === undefined || !REGEX_UNITCODE.test(unitcode))
     return res.status(400).send("Invalid unitcode");
 
-  if (!REGEX_TITLE.test(title)) 
+  if (title === undefined || !REGEX_TITLE.test(title)) 
     return res.status(400).send("Invalid title");
 
-  if (!REGEX_DESCRIPTION.test(description)) 
+  if (description === undefined || !REGEX_DESCRIPTION.test(description)) 
     return res.status(400).send("Invalid description");
 
   if (!req.files || Object.keys(req.files).length === 0) 
     return res.status(400).send("No files were uploaded");
 
+  const file = req.files.upload;
+
   if (!file.name.toLowerCase().endsWith(".pdf"))
     return res.status(400).send("File not a pdf");
 
-  const file = req.files.upload;
   const filename = `files/${username}/${sha1(file.name)}-${Date.now().toString()}.pdf`; //Add timestamp
-  SQL_CREATEPOST_INSERT.run((title, filename, description, username, unitcode), (err) => {
-    if (err === null) { //Worked
+
+  SQL_CREATEPOST_GETID.get([username, unitcode], (err, row) => {
+    if (row === undefined) //Row not found
+      return res.status(400).send("User or Unitcode incorrect");
+
+    SQL_CREATEPOST_INSERT.run([title, row.UserId, filename, description, row.UnitId], (err) => {
+      if (err !== null) {
+        res.status(500).send("Database error");
+        console.log("DATABASE ERROR @ SQL_CREATE_POST_INSERT");
+        console.log(err);
+        return;
+      }
+
       file.mv(filename, (err) => {
         if (err) { //Error occured, reroll the database changes
           SQL_CREATEPOST_ROLLBACK.run(filename);
           res.status(500).send("File store error");
+          return;
         }
+
         res.status(200).send(filename)
       });
-    } else {
-      res.status(400).send("User or Unitcode incorrect");
-    }
-  })
+    }); 
+  });
 });
 
 app.listen(3000, () => console.log("Listening"));

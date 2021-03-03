@@ -177,6 +177,17 @@ const SQL_GETUSERBROWSING_UNITS = db.prepare(`
         ON User.UserId = UnitEnrollment.UserId 
         AND Username = ?;`);
 
+const SQL_GETUSERBROWSING_POSTS = db.prepare(`
+  SELECT Title, Pens, Downloads, Description, Unit.UnitCode
+  FROM Post
+    JOIN User
+      ON User.UserId = Post.UserId
+    JOIN Unit
+      ON Unit.UnitId = Post.UnitId
+  WHERE Username = ?
+  ORDER BY PostId DESC
+  LIMIT 5`);
+
 app.get("/getUserBrowsing/:username&token=:token", async (req, res) => {
   const username = req.params.username;
   const token = req.params.token;
@@ -187,11 +198,16 @@ app.get("/getUserBrowsing/:username&token=:token", async (req, res) => {
   if (!session.checkToken(username, token))
     return res.status(400).send({error: "Invalid login"});
 
-  SQL_GETUSERBROWSING_UNITS.all(username, async (err, rows) => {
-    if (rows === undefined)
+  SQL_GETUSERBROWSING_UNITS.all(username, async (err, units) => {
+    if (units === undefined)
       return res.status(400).send({error: "SQL_GETUSERBROWSING_UNITS Failed, this shouldn't happen"});
 
-    res.status(200).send({units: rows})
+    SQL_GETUSERBROWSING_POSTS.all(username, async (err, posts) => {
+      if (posts === undefined)
+        return res.status(400).send({error: "SQL_GETUSERBROWSING_UNITS Failed, this shouldn't happen"});
+      
+      res.status(200).send({unit: units, post: posts});
+    });  
   });
 });
 

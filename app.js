@@ -16,10 +16,11 @@ console.log("Connected to db!");
 const app = express();
 
 //Constants live here
-const REGEX_USERNAME = /^[\w]{1,32}$/
-const REGEX_UNITCODE = /^[\w]{4,8}$/ //I think this is right
-const REGEX_TITLE = /^[\w ]{1,64}$/
-const REGEX_DESCRIPTION = /^[\w\s]{0,256}$/
+const REGEX_USERNAME = /^[\w]{1,32}$/;
+const REGEX_UNITCODE = /^[\w]{4,8}$/; //I think this is right
+const REGEX_TITLE = /^[\w ]{1,64}$/;
+const REGEX_DESCRIPTION = /^[\w\s]{0,256}$/;
+const REGEX_FILE = /^[\w]{1,32}-[\da-f]{40}-\d+.pdf$/;
 const UPLOAD_SIZE_LIMIT = 25 * 1024 * 1024;
 
 
@@ -306,7 +307,7 @@ app.post("/createPost", async (req, res) => {
   if (!file.name.toLowerCase().endsWith(".pdf"))
     return res.status(400).send("File not a pdf");
 
-  const filename = `${username}/${sha1(file.name)}-${Date.now().toString()}.pdf`;
+  const filename = `${username}-${sha1(file.name)}-${Date.now().toString()}.pdf`;
 
   SQL_CREATEPOST_GETID.get([username, unitcode], (err, row) => {
     if (row === undefined) //Row not found
@@ -320,7 +321,7 @@ app.post("/createPost", async (req, res) => {
         return;
       }
 
-      file.mv("react-frontend/documents/" + filename, (err) => {
+      file.mv("react-frontend/public/documents/" + filename, (err) => {
         if (err) { //Error occured, reroll the database changes
           SQL_CREATEPOST_ROLLBACK.run(filename);
           res.status(500).send("File store error");
@@ -333,13 +334,29 @@ app.post("/createPost", async (req, res) => {
   });
 });
 
-app.get("/getPost&token=:token&url=:url", (req, res) => {
-  const path = req.params.path;
+const SQL_GETPOST = db.prepare(`
+  SELECT Title, File, Pens, Description, Downloads, UnitCode, UnitName
+  FROM Post
+    JOIN Unit
+      ON Post.UnitId = Unit.UnitId
+  WHERE File = ?`);
+
+app.get("/getPost/:file&token=:token", (req, res) => {
+  const file = req.params.file;
   const token = req.params.token;
 
-  
+  if (file === undefined || !REGEX_FILE.test(file))
+    return res.status(400).send("Invalid filepath");
 
+  if (token === undefined || !session.validToken(token))
+    return res.status(400).send("Invalid token");
 
+  SQL_GETPOST.get(file, (err, row) => {
+    if (row === undefined)
+      return res.status(400).send("File not found");
+
+    res.status(200).send(row);
+  });
 });
 
 app.listen(3000, () => console.log("Listening"));

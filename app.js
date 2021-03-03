@@ -290,7 +290,7 @@ app.post("/createPost", async (req, res) => {
   if (!file.name.toLowerCase().endsWith(".pdf"))
     return res.status(400).send("File not a pdf");
 
-  const filename = `files/${username}/${sha1(file.name)}-${Date.now().toString()}.pdf`; //Add timestamp
+  const filename = `react-frontend/documents/${username}/${sha1(file.name)}-${Date.now().toString()}.pdf`;
 
   SQL_CREATEPOST_GETID.get([username, unitcode], (err, row) => {
     if (row === undefined) //Row not found

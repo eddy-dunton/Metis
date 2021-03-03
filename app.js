@@ -178,7 +178,7 @@ const SQL_GETUSERBROWSING_UNITS = db.prepare(`
         AND Username = ?;`);
 
 const SQL_GETUSERBROWSING_POSTS = db.prepare(`
-  SELECT PostId, Title, Pens, Downloads, Description, Unit.UnitCode
+  SELECT File, Title, Pens, Downloads, Description, Unit.UnitCode
   FROM Post
     JOIN User
       ON User.UserId = Post.UserId
@@ -306,7 +306,7 @@ app.post("/createPost", async (req, res) => {
   if (!file.name.toLowerCase().endsWith(".pdf"))
     return res.status(400).send("File not a pdf");
 
-  const filename = `react-frontend/documents/${username}/${sha1(file.name)}-${Date.now().toString()}.pdf`;
+  const filename = `${username}/${sha1(file.name)}-${Date.now().toString()}.pdf`;
 
   SQL_CREATEPOST_GETID.get([username, unitcode], (err, row) => {
     if (row === undefined) //Row not found
@@ -320,7 +320,7 @@ app.post("/createPost", async (req, res) => {
         return;
       }
 
-      file.mv(filename, (err) => {
+      file.mv("react-frontend/documents/" + filename, (err) => {
         if (err) { //Error occured, reroll the database changes
           SQL_CREATEPOST_ROLLBACK.run(filename);
           res.status(500).send("File store error");
@@ -331,6 +331,15 @@ app.post("/createPost", async (req, res) => {
       });
     }); 
   });
+});
+
+app.get("/getPost&token=:token&url=:url", (req, res) => {
+  const path = req.params.path;
+  const token = req.params.token;
+
+  
+
+
 });
 
 app.listen(3000, () => console.log("Listening"));

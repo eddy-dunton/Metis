@@ -321,7 +321,7 @@ app.post("/createPost", async (req, res) => {
         return;
       }
 
-      file.mv("react-frontend/public/documents/" + filename, (err) => {
+      file.mv("react-frontend/build/documents/" + filename, (err) => {
         if (err) { //Error occured, reroll the database changes
           SQL_CREATEPOST_ROLLBACK.run(filename);
           res.status(500).send("File store error");

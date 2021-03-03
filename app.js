@@ -178,7 +178,7 @@ const SQL_GETUSERBROWSING_UNITS = db.prepare(`
         AND Username = ?;`);
 
 const SQL_GETUSERBROWSING_POSTS = db.prepare(`
-  SELECT Title, Pens, Downloads, Description, Unit.UnitCode
+  SELECT PostId, Title, Pens, Downloads, Description, Unit.UnitCode
   FROM Post
     JOIN User
       ON User.UserId = Post.UserId

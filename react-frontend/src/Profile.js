@@ -13,6 +13,7 @@ class Profile extends React.Component {
             loading: true,
             profile: null,
             loggedIn:props.loggedIn,
+            search:"",
         };
         console.log(this.props)
         this.failCallback = props.failCallback;
@@ -22,7 +23,8 @@ class Profile extends React.Component {
         let response = await fetch("/getUserInfo/"+username+"&token="+token);
         let resdata = await response.json();
         console.log(resdata)
-        if (resdata.username){
+        resdata.username = username;
+        if (resdata.inst){
             this.setState({ profile: resdata,loading: false,loggedIn:true})
         } else {
             this.failCallback()
@@ -56,8 +58,8 @@ class Profile extends React.Component {
                             <img className="profile-content-picture" alt="profile img" src={this.state.profile.picture}/>
                             <div className="profile-content-username">{this.state.profile.username}</div>
                             <div className="profile-content-course">{this.state.profile.course}</div>
-                            <div className="profile-content-uni">{this.state.profile.uni}</div>
-                            <div className="profile-content-pens"><span role="img" aria-label="pen">🖋️</span> {this.state.profile.pens} pens</div>
+                            <div className="profile-content-uni">{this.state.profile.inst}</div>
+                            <div className="profile-content-pens"><span role="img" aria-label="pen">🖋️</span> {this.state.profile.score} pens</div>
                         </div>
                         <div className="profile-notes">
                             <div className="profile-notes-input">
@@ -65,7 +67,7 @@ class Profile extends React.Component {
                                 {/* TODO: create dropdown component */}
                             </div>
                             <div>
-                                {this.state.profile.notes.map((note, i) => (
+                                {this.state.profile.posts.map((note, i) => (
                                     <div className="profile-note" key={i}>
                                         <div className="profile-note-content">
                                             

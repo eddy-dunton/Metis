@@ -275,7 +275,7 @@ class App extends React.Component {
                 {/* part of react router handles different paths given to it */}
                 <Switch>
                     <Route path="/reset-password" component={Reset} />
-                    <Route path="/profile/:username" render={(data) => <Profile token={this.state.token} username={data.match.params.username} loggedIn={this.state.loggedIn}/>}/>
+                    <Route path="/profile/:username" render={(data) => <Profile token={this.state.token} failCallback={this.failedRequest} username={data.match.params.username} loggedIn={this.state.loggedIn}/>}/>
                     <Route path="/" component={Home} />
                 </Switch>
             </div>

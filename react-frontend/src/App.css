@@ -345,7 +345,7 @@ body {
     color:#AAAAAA;
 }
 .profile-notes{
-    width:50vw;
+    width:60vw;
 }
 .profile-notes-inputs{}
 .profile-note{}
@@ -360,6 +360,11 @@ body {
     text-align: center;
     line-height: 48px;  
     margin: 16px 0px;
+}
+.profile-note-content >* >  *{
+    display:flex;
+    align-items:center;
+    margin: 0px 4px;
 }
 .profile-note-pdf{
 

@@ -3,41 +3,46 @@ import './App.css';
 
 import dots from './images/dots.svg';
 import arrow from './images/arrow.svg';
+import pdf from './images/pdf.svg';
 
 class Profile extends React.Component {
+
     constructor(props) {
         super(props);
         this.state = {
-            profile: null,
             loading: true,
-            loggedIn:true
+            profile: null,
+            loggedIn:props.loggedIn,
         };
+        this.loginCallback = props.loginCallback;
+        this.failCallback = props.failCallback;
+        this.uploadCallback = props.uploadCallback;
+        this.getProfileInfo = this.getProfileInfo.bind(this);
     }
-
-    async getProfileInfo() {
-        //const response = await fetch("/getUserInfo", {username:this.state.username});
-        //const resdata = await response.json();
-        const resdata = { 
-            "picture": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.watsonmartin.com%2Fwp-content%2Fuploads%2F2016%2F03%2Fdefault-profile-picture.jpg",
-            "uni": "University of Bath",
-            "course":"Maths and Computer Science",
-            "notes":[
-                {"name":"Pushdown automata", "module":"CM20255","pens":257,"downloads":432,"comments":15},
-                {"name":"Pushdown automata", "module":"CM20255","pens":157,"downloads":432,"comments":15},
-                {"name":"Pushdown automata", "module":"CM20255","pens":87,"downloads":432,"comments":15}
-            ],
-            "username":"John Smith",
-            "pens": 257
-        } 
-        this.setState({ profile: resdata })
-        this.setState({ loading: false })
+    async getProfileInfo(username, token) {
+        let response = await fetch("/getUserInfo/"+username+"&token="+token);
+        let resdata = await response.json();
+        console.log(resdata)
+        if (resdata.username){
+            this.setState({ profile: resdata,loading: false,loggedIn:true})
+        } else {
+            this.failCallback()
+            this.setState({ profile: null,loading: true,loggedIn:false})
+        }
     }
-
     componentDidMount() {
-        //if (this.props.loggedIn){
-        //this.setState({ loggedIn: this.props.loggedIn })
-        this.getProfileInfo()
-        //}
+        if (this.props.loggedIn){
+            this.setState({ loggedIn: this.props.loggedIn })
+            this.getProfileInfo(this.props.username, this.props.token)
+        }
+    }
+    componentDidUpdate(prevProps) {
+        if (prevProps.loggedIn !== this.props.loggedIn){
+            if (this.props.loggedIn){
+                this.setState({ loggedIn: this.props.loggedIn })
+                this.getProfileInfo(this.props.username, this.props.token)
+            }
+        }
     }
 
     render() {
@@ -66,7 +71,7 @@ class Profile extends React.Component {
                                         <div className="profile-note-content">
                                             
                                             <div className="profile-note-left">
-                                                <div className="profile-note-pdf">PDF</div>
+                                                <img className="profile-note-pdf" alt="PDF" src={pdf}/>
                                                 <div className="profile-note-name">{note.name}</div>
                                             </div>
                                             <div className="profile-note-right">

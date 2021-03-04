@@ -14,9 +14,8 @@ class Profile extends React.Component {
             profile: null,
             loggedIn:props.loggedIn,
         };
-        this.loginCallback = props.loginCallback;
+        console.log(this.props)
         this.failCallback = props.failCallback;
-        this.uploadCallback = props.uploadCallback;
         this.getProfileInfo = this.getProfileInfo.bind(this);
     }
     async getProfileInfo(username, token) {
@@ -91,7 +90,7 @@ class Profile extends React.Component {
                         </div>
                     </>
                 ): (
-                    "need to be signed in"
+                    "need to be signed in to view " + this.props.username
                 )}
             </div>
         );

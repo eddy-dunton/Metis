@@ -392,4 +392,8 @@ app.get("/searchPosts/:search&username=:username&token=:token", (req, res) => {
   });
 });
 
+app.get('*', (req,res) =>{
+  res.sendFile(path.join(__dirname+'/client/build/index.html'));
+});
+
 app.listen(3000, () => console.log("Listening"));

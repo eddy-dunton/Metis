@@ -46,7 +46,7 @@ app.use(express.json());
 
   res is the response the server provides
 
-  Arugments are passed as child to req.params
+  Arugments are passed as child to req.params (GET) or req.body (POST)
   Ex.
   req.params.somevalue
 
@@ -356,6 +356,39 @@ app.get("/getPost/:file&token=:token", (req, res) => {
       return res.status(400).send("File not found");
 
     res.status(200).send(row);
+  });
+});
+
+const SQL_SEARCHPOSTS = db.prepare(`
+  SELECT Title, File, Pens, Description, Downloads, UnitCode, UnitName
+  FROM Post
+    JOIN User
+    ON User.UserId = Post.UserId	
+  JOIN Unit
+    ON Unit.UnitId = Post.UnitId
+  WHERE Title LIKE ? 
+    AND Unit.InstitutionId = (SELECT InstitutionId 
+                              FROM User 
+                              WHERE Username = ?)
+`);
+
+app.get("/searchPosts/:search&username=:username&token=:token", (req, res) => {
+  const search = req.params.search;
+  const username = req.params.username;
+  const token = req.params.token;
+
+  if (search === undefined || !REGEX_TITLE.test(search))
+    return res.status(400).send("Invalid search term");
+
+  //Username doesn't have to be validated beacuse if it is invalid it will fail the token check
+  if (username === undefined)
+    return res.status(400).send("No username")
+
+  if (token === undefined || !session.checkToken(username, token))
+    return res.status(400).send("Invalid token");
+
+  SQL_SEARCHPOSTS.all(['%' + search + '%', username], (err, rows) => {
+    res.status(200).send(rows);
   });
 });
 

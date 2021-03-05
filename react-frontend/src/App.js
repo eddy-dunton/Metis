@@ -4,6 +4,8 @@ import Cookies from 'universal-cookie';
 
 import sha256 from 'crypto-js/sha256';
 
+import pdf from './images/pdf.svg';
+
 //https://blog.logrocket.com/react-router-dom-set-up-essential-components-parameterized-routes-505dc93642f1/
 
 import './App.css';
@@ -26,7 +28,8 @@ class App extends React.Component {
             loggedIn: this.cookies.get('token') ? true : false,
             showLogin: false,
             showUpload: false,
-            currentTab:'signin'
+            currentTab:'signin',
+            files:[]
         };
 
         this.login = this.login.bind(this);
@@ -37,6 +40,7 @@ class App extends React.Component {
         this.signin = this.signin.bind(this);
         this.hashPassword = this.hashPassword.bind(this);
         this.createAccount = this.createAccount.bind(this);
+        this.publishFile = this.publishFile.bind(this);
         //https://www.devaradise.com/react-tabs-tutorial
         this.signInTabs = [
             {
@@ -232,16 +236,32 @@ class App extends React.Component {
         this.setState({ showUpload: !this.state.showUpload });
     }
 
+    publishFile(event){
+        let no = event.target.id.split("button")[1]
+        let title =document.getElementById("title"+no).value
+        let module = document.getElementById("module"+no).value
+        let description = document.getElementById("description"+no).value
+        let formData = new FormData();
+        formData.append('File', this.state.files[no])
+        formData.append('username', this.state.username)
+        formData.append('token', this.state.token)
+        formData.append('unitcode', module)
+        formData.append('title', title)
+        formData.append('description', description)
+        fetch("/createPost", {
+            method:"POST",
+            body: formData,
+        }).then(d => console.log(d))
+    }
+
     fileUploaded(files) {
         if (files){
             if (files.length !== 0){
-                /* TODO do someting with file*/
-                //probably something useful here
-                //https://developer.mozilla.org/en-US/docs/Web/API/File/Using_files_from_web_applications
-                //https://attacomsian.com/blog/uploading-files-using-fetch-api -- fetch is so op
                 for(var i=0;i<files.length;i++){
-                    console.log(files[i])
-                    console.log(URL.createObjectURL(files[i]))
+                    if(!this.state.files.find(x => x.name === files[i].name)){
+                        this.state.files.push(files[i])
+                        this.setState({files:this.state.files})
+                    }
                 }
             }
         }
@@ -271,6 +291,25 @@ class App extends React.Component {
                 {/* modal is initially hidden and shown when this.upload is called */}
                 <Modal className={"uploadModal"} show={this.state.showUpload} handleClose={this.upload}>
                     <UploadArea handleDrop={this.fileUploaded} filetype="PDF" />
+                    <div>Queued Files</div>
+                    <div className="uploaded-files">
+                        {this.state.files.map((file,i) => (
+                            <div key={i} className="file-upload-section">
+                                <div className="file-upload-header">
+                                    <img src={pdf}/>
+                                    <div className="file-upload-filename">{file.name}</div> 
+                                </div> 
+                                <div className="file-upload-inputs">
+                                    <div className="file-upload-title-module">
+                                        <input id={"title"+i} className="file-upload-title" placeholder="Title... (required)"/>
+                                        <input id={"module"+i} className="file-upload-module" />
+                                    </div>
+                                    <textarea id={"description"+i} type="textarea" className="file-upload-description" placeholder="Description... (required)"/>
+                                    <button id={"button"+i} onClick={this.publishFile}>Publish</button>
+                                </div>
+                            </div> 
+                        ))}
+                    </div> 
                 </Modal>
                 {/* part of react router handles different paths given to it */}
                 <Switch>

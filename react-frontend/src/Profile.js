@@ -15,14 +15,13 @@ class Profile extends React.Component {
             loggedIn:props.loggedIn,
             search:"",
         };
-        console.log(this.props)
         this.failCallback = props.failCallback;
         this.getProfileInfo = this.getProfileInfo.bind(this);
+        this.handleSearch = this.handleSearch.bind(this);
     }
     async getProfileInfo(username, token) {
         let response = await fetch("/getUserInfo/"+username+"&token="+token);
         let resdata = await response.json();
-        console.log(resdata)
         resdata.username = username;
         if (resdata.inst){
             this.setState({ profile: resdata,loading: false,loggedIn:true})
@@ -31,6 +30,9 @@ class Profile extends React.Component {
             this.setState({ profile: null,loading: true,loggedIn:false})
         }
     }
+
+    handleSearch(event) {    this.setState({search: event.target.value});  }
+
     componentDidMount() {
         if (this.props.loggedIn){
             this.setState({ loggedIn: this.props.loggedIn })
@@ -57,20 +59,19 @@ class Profile extends React.Component {
                         <div className="profile-content">
                             <img className="profile-content-picture" alt="profile img" src={this.state.profile.picture}/>
                             <div className="profile-content-username">{this.state.profile.username}</div>
-                            <div className="profile-content-course">{this.state.profile.course}</div>
                             <div className="profile-content-uni">{this.state.profile.inst}</div>
                             <div className="profile-content-pens"><span role="img" aria-label="pen">🖋️</span> {this.state.profile.score} pens</div>
                         </div>
                         <div className="profile-notes">
                             <div className="profile-notes-input">
-                                <input />
+                                <input placeholder="Search for a note..." className="profile-input-search" type="text" value={this.state.search} onChange={this.handleSearch} />
                                 {/* TODO: create dropdown component */}
                             </div>
                             <div>
-                                {this.state.profile.posts.map((note, i) => (
+                                {this.state.profile.posts.map((note, i) => {if (note.name.includes(this.state.search)) {(
                                     <div className="profile-note" key={i}>
                                         <div className="profile-note-content">
-                                            
+
                                             <div className="profile-note-left">
                                                 <img className="profile-note-pdf" alt="PDF" src={pdf}/>
                                                 <div className="profile-note-name">{note.name}</div>
@@ -87,7 +88,7 @@ class Profile extends React.Component {
                                             <div>{note.comments} comments</div>
                                         </div>
                                     </div>
-                                ))}
+                                )}})}
                             </div>
                         </div>
                     </>

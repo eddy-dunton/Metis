@@ -64,9 +64,11 @@ class Navbar extends React.Component {
                             <div className="navbar-profile">Loading...</div>
                         ) : (
                             <div className="navbar-profile">
+                                <Link className="clickable" to={"/profile/"+this.state.profile.username}>
                                 <img src={this.state.profile.picture} alt="Profile Pic" />
+                                </Link>
                                 <div className="navbar-profile-content" >
-                                    <div className="navbar-profile-name">{this.state.profile.username}</div>
+                                    <Link to={"/profile/"+this.state.profile.username} className="navbar-profile-name">{this.state.profile.username}</Link>
                                     <div className="navbar-profile-uni">{this.state.profile.inst}</div>
                                     <div className="navbar-profile-pens"><span role="img" aria-label="pen">🖋️</span> {this.state.profile.score} pens</div>
                                 </div>

@@ -97,7 +97,7 @@ body {
     font-family: 'Roboto', sans-serif;
 }
 .navbar-search input::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-    cocolumn: rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.2);
     opacity: 1; /* Firefox */
     white-space: nowrap;
     overflow: hidden;
@@ -130,6 +130,7 @@ body {
     height:50px;
     border-radius: 100%;
     margin:5px;
+    margin-right:16px;
 }
 .navbar-profile-content{
     font-size:12px;
@@ -140,6 +141,8 @@ body {
 }
 
 .navbar-profile-name {
+    text-decoration:none;
+    color:white;
     font-size:20px;
 }
 
@@ -226,6 +229,79 @@ body {
     padding:15px;
     background-color:rgba(0,0,0,0);
     border-bottom: 4px solid #999999;
+}
+
+.uploaded-files{
+    overflow-y:scroll;
+}
+
+.file-upload-section{
+    font-family: 'Roboto', sans-serif;
+    background:#EEEEEE;
+    border-radius: 15px;
+    padding:15px;
+    margin:8px 45px;
+}
+.file-upload-header{
+    display:flex;
+    flex-direction:row;
+}
+
+.file-upload-header > *{
+   margin-right:4px; 
+}
+
+.file-upload-inputs{
+    display:flex;
+    flex-direction:column;
+}
+
+.file-upload-inputs textarea{
+    margin:4px;
+    padding:4px;
+    border:none;
+    background-color:rgba(0,0,0,0.1);
+    border-radius:10px;
+}
+
+.file-upload-inputs input{
+    margin:4px;
+    padding:4px;
+    border:none;
+    background-color:rgba(0,0,0,0.1);
+    border-radius:10px;
+}
+
+.file-upload-filename{
+display: flex;
+align-items: center;
+}
+
+.file-upload-title-module{
+    display:flex;
+    flex-direction:row;
+}
+
+.file-upload-title{
+    flex-grow: 4;
+    width:100%;
+}
+
+.file-upload-module{
+    flex-grow: 1;
+    width:50%;
+}
+
+.file-upload-description{
+    height:5em;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    background:#DEDEDE;
+    resize: none;
+}
+
+.file-upload-inputs-input{
+    background:#E5E5E5;
 }
 
 .active {
@@ -319,6 +395,7 @@ body {
     flex-direction:row;
     justify-content:center;
     margin:auto;
+    padding:5vh;
 }
 .profile-content{
     font-family: 'Josefin Sans', sans-serif;
@@ -343,6 +420,15 @@ body {
 }
 .profile-content-pens{
     color:#AAAAAA;
+}
+.profile-input-search{
+    width:70%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-sizing: border-box;
+    border-radius: 7px;
+    padding:8px;
+    color:white;
 }
 .profile-notes{
     width:60vw;

@@ -396,4 +396,40 @@ app.get('*', (req,res) =>{
   res.sendFile(__dirname+'/react-frontend/build/index.html');
 });
 
+const SQL_GETPOTENTIALUNITS = db.prepare(`
+  SELECT SUBQUERY.UnitName, SUBQUERY.UnitCode
+    FROM
+    (
+      SELECT Institution.InstitutionId AS InstitutionId, Unit.UnitCode AS UnitCode, Unit.UnitName AS UnitName
+      FROM Institution
+        JOIN Unit
+        ON Institution.InstitutionId = Unit.InstitutionId
+    ) AS SUBQUERY
+      JOIN User
+      ON  SUBQUERY.InstitutionId = User.InstitutionId
+        WHERE User.Username = ?`
+  )
+
+//gets list of all unit in a given institution
+app.get("/getPotentialUnits/:username&token=:token", (req, res) => {
+  const username = req.params.username;
+  const token = req.params.token;
+
+  if(username === undefined)
+    return res.status(400).send("No username")
+
+  if (token === undefined || !session.checkToken(username, token))
+    return res.status(400).send("Invalid token");
+
+  SQL_GETPOTENTIALUNITS.all(username, async (err, rows) => {
+    if (rows === undefined)
+      return res.status(500).send("Database failure");
+
+    res.status(200).send(rows);
+  })
+    
+})
+
+
+
 app.listen(3000, () => console.log("Listening"));

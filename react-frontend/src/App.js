@@ -5,6 +5,7 @@ import Cookies from 'universal-cookie';
 import sha256 from 'crypto-js/sha256';
 
 import pdf from './images/pdf.svg';
+import cross from './images/cross.svg';
 
 //https://blog.logrocket.com/react-router-dom-set-up-essential-components-parameterized-routes-505dc93642f1/
 
@@ -236,25 +237,27 @@ class App extends React.Component {
         this.setState({ showUpload: !this.state.showUpload });
     }
 
-    publishFile(event){
+    async publishFile(event){
         let no = event.target.id.split("button")[1]
         let title =document.getElementById("title"+no).value
         let module = document.getElementById("module"+no).value
         let description = document.getElementById("description"+no).value
         let formData = new FormData();
-        formData.append('File', this.state.files[no])
+        formData.append('upload', this.state.files[no])
         formData.append('username', this.state.username)
         formData.append('token', this.state.token)
         formData.append('unitcode', module)
         formData.append('title', title)
         formData.append('description', description)
-        fetch("/createPost", {
+        let response = await fetch("/createPost", {
             method:"POST",
             body: formData,
-        }).then(d => console.log(d))
+        })
+        console.log(await response.json())
     }
 
     fileUploaded(files) {
+        console.log(files)
         if (files){
             if (files.length !== 0){
                 for(var i=0;i<files.length;i++){
@@ -294,9 +297,9 @@ class App extends React.Component {
                     <div>Queued Files</div>
                     <div className="uploaded-files">
                         {this.state.files.map((file,i) => (
-                            <div key={i} className="file-upload-section">
+                            <section key={i} className="file-upload-section">
                                 <div className="file-upload-header">
-                                    <img src={pdf}/>
+                                    <img alt="pdf" src={pdf}/>
                                     <div className="file-upload-filename">{file.name}</div> 
                                 </div> 
                                 <div className="file-upload-inputs">
@@ -307,7 +310,11 @@ class App extends React.Component {
                                     <textarea id={"description"+i} type="textarea" className="file-upload-description" placeholder="Description... (required)"/>
                                     <button id={"button"+i} onClick={this.publishFile}>Publish</button>
                                 </div>
-                            </div> 
+                                <img src={cross} alt="Close" className="file-upload-close clickable hover" onClick={() => {let temp=this.state.files;
+                                temp.splice(i,1);
+                                 this.setState({files:temp})
+                                }}/>
+                            </section> 
                         ))}
                     </div> 
                 </Modal>

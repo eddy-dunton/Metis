@@ -235,12 +235,21 @@ body {
     overflow-y:scroll;
 }
 
+.file-upload-close{
+    width:15px;
+    height:15px;
+    position:absolute;
+    top:0;
+    right:0;
+}
+
 .file-upload-section{
     font-family: 'Roboto', sans-serif;
     background:#EEEEEE;
     border-radius: 15px;
     padding:15px;
     margin:8px 45px;
+    position:relative;
 }
 .file-upload-header{
     display:flex;

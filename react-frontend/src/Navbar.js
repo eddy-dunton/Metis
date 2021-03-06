@@ -53,7 +53,7 @@ class Navbar extends React.Component {
                 </Link>
                 <div className="navbar-search">
                     <img src={search} alt="Search button" className="clickable"/>
-                    <input  placeholder="Search..."/>
+                    <input placeholder="Search..."/>
                 </div>
                 <div className="navbar-upload hover clickable" onClick={this.uploadCallback}>
                     <img src={upload} alt="Upload button"/>

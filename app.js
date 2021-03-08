@@ -339,7 +339,7 @@ app.post("/createPost", async (req, res) => {
           return;
         }
 
-        res.status(200).send(filename)
+        res.status(200).send({file: filename})
       });
     }); 
   });
@@ -496,6 +496,86 @@ app.post("/joinUnit", async (req, res) => {
         });
       });
     });
+  });
+});
+
+app.post("/logout", async (req, res) => {
+  const username = req.body.username;
+  const token = req.body.token;
+
+  if (username === undefined)
+    return res.status(400).send({error:"No username"});
+
+  if (token === undefined || !session.checkToken(username, token)) 
+    return res.status(400).send({error:"Invalid token"});
+
+  if (session.removeToken(username)) {
+    res.status(200).send();
+  } else { //Error, really should be almost impossible
+    res.status(500).send({error:"Unable to remove token"})
+  }
+});
+
+const SQL_PENPOST = db.prepare(`
+  UPDATE Post 
+  SET Pens = Pens + 1 
+  WHERE File = ?
+`);
+
+app.post("/penPost", async (req, res) => {
+  const username = req.body.username;
+  const token = req.body.token;
+  const file = req.body.file;
+
+  if (username === undefined)
+    return res.status(400).send({error:"No username"});
+
+  if (token === undefined || !session.checkToken(username, token)) 
+    return res.status(400).send({error:"Invalid token"});
+
+  if (file === undefined || !REGEX_FILE.test(file))
+    return res.status(400).send({error:"Invalid filepath"});
+
+  SQL_PENPOST.run(file, (err) => {
+    if (err !== null)
+      return res.status(500).send({error:"Database error adding pen"});
+
+    return res.status(200).send();
+  });
+});
+
+const SQL_CREATECOMMENT = db.prepare(`
+  INSERT INTO Comment 
+    (Description, UserId, PostId)
+  VALUES 
+    (?, 
+    (SELECT UserId FROM User WHERE Username = ?), 
+    (SELECT PostId FROM Post WHERE File = ?))
+`);
+
+app.post("/createComment", async (req, res) => {
+  const username = req.body.username;
+  const token = req.body.token;
+  const file = req.body.file;
+  const text = req.body.text;
+
+  if (username === undefined || !REGEX_USERNAME.test(username)) 
+    return res.status(400).send({error:"No / Invalid username"});
+
+  if (!session.checkToken(username, token)) 
+    return res.status(400).send({error:"Invalid login"});
+
+  if (text === undefined || !REGEX_DESCRIPTION.test(text)) 
+    return res.status(400).send({error:"Invalid description"});
+
+  if (file === undefined || !REGEX_FILE.test(file))
+    return res.status(400).send({error:"Invalid file"});
+
+  SQL_CREATECOMMENT.run([text,username,file], async (err) => {
+    if (err !== null)
+      return res.status(500).send({error:"Database error creating comment"})
+  
+    res.status(200).send()
   });
 });
 

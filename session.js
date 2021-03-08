@@ -48,6 +48,13 @@ function checkToken(username, value) {
 	return true;
 }
 
+//Removes a token
+//Does not check that a token is exists / is valid
+//As this should be preceeded by a call to check token first
+function removeToken(username) {
+	return delete tokens[username];
+}
+
 //Checks that a token is valid for any user
 function validToken(value) {
 	return Object.values(tokens).some(token => token.value === value);
@@ -56,3 +63,4 @@ function validToken(value) {
 module.exports.addToken = addToken;
 module.exports.checkToken = checkToken;
 module.exports.validToken = validToken;
+module.exports.removeToken = removeToken;

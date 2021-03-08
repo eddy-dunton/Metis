@@ -499,6 +499,23 @@ app.post("/joinUnit", async (req, res) => {
   });
 });
 
+app.post("/logout", async (req, res) => {
+  const username = req.body.username;
+  const token = req.body.token;
+
+  if (username === undefined)
+    return res.status(400).send({error:"No username"});
+
+  if (token === undefined || !session.checkToken(username, token)) 
+    return res.status(400).send({error:"Invalid token"});
+
+  if (session.removeToken(username)) {
+    res.status(200).send();
+  } else { //Error, really should be almost impossible
+    res.status(500).send({error:"Unable to remove token"})
+  }
+});
+
 //Make sure this stay at the bottom
 app.get('*', (req,res) =>{
   res.sendFile(__dirname+'/react-frontend/build/index.html');

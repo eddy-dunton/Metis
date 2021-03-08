@@ -30,8 +30,10 @@ class App extends React.Component {
             showLogin: false,
             showUpload: false,
             currentTab:'signin',
+            profile:null,
             files:[]
         };
+
 
         this.login = this.login.bind(this);
         this.upload = this.upload.bind(this);
@@ -42,6 +44,12 @@ class App extends React.Component {
         this.hashPassword = this.hashPassword.bind(this);
         this.createAccount = this.createAccount.bind(this);
         this.publishFile = this.publishFile.bind(this);
+        this.getProfileInfo = this.getProfileInfo.bind(this);
+
+        if (this.username){
+            this.getProfileInfo()
+        }
+
         //https://www.devaradise.com/react-tabs-tutorial
         this.signInTabs = [
             {
@@ -185,6 +193,8 @@ class App extends React.Component {
             this.cookies.set('token', resjson.token, { path: '/' });
             this.cookies.set('username', this.username, { path: '/' });
             this.login()
+
+            this.getProfileInfo()
         }
     }
 
@@ -220,7 +230,19 @@ class App extends React.Component {
             this.cookies.set('token', resjson.token, { path: '/' });
             this.cookies.set('username', resjson.username, { path: '/' });
             this.login()
+            this.getProfileInfo()
         }
+    }
+
+    async getProfileInfo(){
+            let response = await fetch("/getUserInfo/"+this.state.username+"&token="+this.state.token);
+            let resdata = await response.json();
+            if (resdata.error){
+                this.failedRequest()
+                this.setState({ profile: null })
+            } else {
+                this.setState({ profile: resdata})
+            }
     }
 
     failedRequest(){
@@ -229,12 +251,16 @@ class App extends React.Component {
         this.cookies.remove('token') 
     }
 
-    login(e) {
+    async login(e) {
         this.setState({ showLogin: !this.state.showLogin});
     }
 
     upload() {
-        this.setState({ showUpload: !this.state.showUpload });
+        if (this.state.profile){
+            this.setState({ showUpload: !this.state.showUpload });
+        } else {
+            this.getProfileInfo()
+        }
     }
 
     async publishFile(event){
@@ -260,7 +286,7 @@ class App extends React.Component {
         console.log(files)
         if (files){
             if (files.length !== 0){
-                for(var i=0;i<files.length;i++){
+                for(let i=0;i<files.length;i++){
                     if(!this.state.files.find(x => x.name === files[i].name)){
                         this.state.files.push(files[i])
                         this.setState({files:this.state.files})
@@ -294,7 +320,7 @@ class App extends React.Component {
                 {/* modal is initially hidden and shown when this.upload is called */}
                 <Modal className={"uploadModal"} show={this.state.showUpload} handleClose={this.upload}>
                     <UploadArea handleDrop={this.fileUploaded} filetype="PDF" />
-                    <div>Queued Files</div>
+                    <div className="queued-files">Queued Files</div>
                     <div className="uploaded-files">
                         {this.state.files.map((file,i) => (
                             <section key={i} className="file-upload-section">
@@ -305,14 +331,18 @@ class App extends React.Component {
                                 <div className="file-upload-inputs">
                                     <div className="file-upload-title-module">
                                         <input id={"title"+i} className="file-upload-title" placeholder="Title... (required)"/>
-                                        <input id={"module"+i} className="file-upload-module" />
+                                        <select id={"module"+i} className="file-upload-module" onChange={(event) => {this.setState({unitFilter:event.target.value})}}>
+                                            {this.state.profile.units.map((unit,i)=>{return (
+                                                <option key={i} value={unit.UnitCode}>{unit.UnitCode}</option>
+                                            )})}
+                                        </select>
                                     </div>
                                     <textarea id={"description"+i} type="textarea" className="file-upload-description" placeholder="Description... (required)"/>
                                     <button id={"button"+i} onClick={this.publishFile}>Publish</button>
                                 </div>
                                 <img src={cross} alt="Close" className="file-upload-close clickable hover" onClick={() => {let temp=this.state.files;
-                                temp.splice(i,1);
-                                 this.setState({files:temp})
+                                    temp.splice(i,1);
+                                    this.setState({files:temp})
                                 }}/>
                             </section> 
                         ))}
@@ -321,7 +351,7 @@ class App extends React.Component {
                 {/* part of react router handles different paths given to it */}
                 <Switch>
                     <Route path="/reset-password" component={Reset} />
-                    <Route path="/profile/:username" render={(data) => <Profile token={this.state.token} failCallback={this.failedRequest} username={data.match.params.username} loggedIn={this.state.loggedIn}/>}/>
+                    <Route path="/profile/:username" render={(data) => <Profile token={this.state.token} failCallback={this.failedRequest} myusername={this.state.username} username={data.match.params.username} loggedIn={this.state.loggedIn}/>}/>
                     <Route path="/" component={Home} />
                 </Switch>
             </div>

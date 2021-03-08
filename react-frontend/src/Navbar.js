@@ -55,9 +55,12 @@ class Navbar extends React.Component {
                     <img src={search} alt="Search button" className="clickable"/>
                     <input placeholder="Search..."/>
                 </div>
-                <div className="navbar-upload hover clickable" onClick={this.uploadCallback}>
-                    <img src={upload} alt="Upload button"/>
-                </div>
+                {this.state.loggedIn ? (
+                    <div className="navbar-upload hover clickable" onClick={this.uploadCallback}>
+                        <img src={upload} alt="Upload button"/>
+                    </div>
+                ) : (<></>)
+                }
                 {/* if its loading the profile say its loading, if not logged in show the login button, if not loading and logged in show profile */}
                 {this.state.loggedIn ? (this.state.loading || !this.state.profile) ? 
                         (
@@ -65,10 +68,13 @@ class Navbar extends React.Component {
                         ) : (
                             <div className="navbar-profile">
                                 <Link className="clickable" to={"/profile/"+this.state.profile.username}>
-                                <img src={this.state.profile.picture} alt="Profile Pic" />
+                                    <img src={this.state.profile.picture} alt="Profile Pic" />
                                 </Link>
                                 <div className="navbar-profile-content" >
+                                    <div style={{display:"flex"}}>
                                     <Link to={"/profile/"+this.state.profile.username} className="navbar-profile-name">{this.state.profile.username}</Link>
+                                        <div className="clickable" style={{alignSelf:"center", marginLeft:"4px"}}>v</div>
+                                    </div>
                                     <div className="navbar-profile-uni">{this.state.profile.inst}</div>
                                     <div className="navbar-profile-pens"><span role="img" aria-label="pen">🖋️</span> {this.state.profile.score} pens</div>
                                 </div>

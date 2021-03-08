@@ -146,15 +146,6 @@ body {
     font-size:20px;
 }
 
-.navbar-profile-name:after {
-    content: '';
-    position:absolute;
-    margin-left:5px;
-    margin-top:7px;
-    border-top: 10px solid #eeeeee;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-}
 .navbar-profile-pens {
     color:#AAAAAA;
 }
@@ -235,6 +226,14 @@ body {
     overflow-y:scroll;
 }
 
+.queued-files{
+    text-align:center;
+    font-family: 'Roboto', sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 24px;
+}
+
 .file-upload-close{
     width:15px;
     height:15px;
@@ -257,7 +256,7 @@ body {
 }
 
 .file-upload-header > *{
-   margin-right:4px; 
+    margin-right:4px; 
 }
 
 .file-upload-inputs{
@@ -265,15 +264,7 @@ body {
     flex-direction:column;
 }
 
-.file-upload-inputs textarea{
-    margin:4px;
-    padding:4px;
-    border:none;
-    background-color:rgba(0,0,0,0.1);
-    border-radius:10px;
-}
-
-.file-upload-inputs input{
+.file-upload-inputs textarea,.file-upload-inputs input,.file-upload-inputs select{
     margin:4px;
     padding:4px;
     border:none;
@@ -282,8 +273,8 @@ body {
 }
 
 .file-upload-filename{
-display: flex;
-align-items: center;
+    display: flex;
+    align-items: center;
 }
 
 .file-upload-title-module{
@@ -439,10 +430,22 @@ align-items: center;
     padding:8px;
     color:white;
 }
+.profile-input-module{
+    width:25%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-sizing: border-box;
+    border-radius: 7px;
+    padding:8px;
+    color:white;
+}
 .profile-notes{
     width:60vw;
 }
-.profile-notes-inputs{}
+.profile-notes-input{
+display:flex;
+justify-content:space-evenly;
+}
 .profile-note{}
 .profile-note-content{
     display:flex;

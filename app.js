@@ -436,28 +436,33 @@ app.get("/getPotentialUnits/:username&token=:token", (req, res) => {
   });  
 });
 
+const SQL_JOINUNIT_UNITID = db.prepare(`
+  SELECT UnitId
+  FROM Unit
+  WHERE UnitCode = ?
+`)
+
+const SQL_JOINUNIT_USERID = db.prepare(`
+  SELECT UserId
+  FROM User
+  WHERE Username = ?
+`)
+
+const SQL_JOINUNIT_TEST = db.prepare(`
+  SELECT * 
+  FROM UnitEnrollment
+  WHERE UserId = ? AND UnitId = ?;
+`);
+
 const SQL_JOINUNIT = db.prepare(`
   INSERT INTO UnitEnrollment (UserId, UnitId)
   VALUES (?, ?)
-`);
-
-const SQL_GETUNITID = db.prepare(`
-  SELECT UnitId
-    FROM Unit
-    WHERE Unitcode = ?
-`);
-
-const SQL_GETUSERID = db.prepare(`
-  SELECT UserId
-    FROM User
-    WHERE Username = ?
-`);
+`)
 
 app.post("/joinUnit", async (req, res) => {
-  const username = req.params.username;
-  const unitcode = req.params.unitcode;
-  const token    = req.params.token;
-
+  const username = req.body.username;
+  const unitcode = req.body.unitcode;
+  const token    = req.body.token;
 
   if (username === undefined || !REGEX_USERNAME.test(username)) 
     return res.status(400).send("No / Invalid username");
@@ -468,27 +473,30 @@ app.post("/joinUnit", async (req, res) => {
   if (unitcode === undefined || !REGEX_UNITCODE.test(unitcode))
     return res.status(400).send("Invalid unitcode");
 
-
-  SQL_GETUSERID.all(username, async (err, userId) => {
+  SQL_JOINUNIT_USERID.get(username, async (err, userId) => {
     if (userId === undefined)
-      return res.status(500).send("No such user exists");
-  });
-
-  SQL_GETUNITID.all(username, async (err, unitId) => {
-    if (unitId === undefined)
-      return res.status(500).send("No such unit exists");
-  });
-
-  SQL_JOINUNIT.all(userId, unitId, async (err) => {
-    if (err !== null) {
-      res.status(500).send("Database error");
-      console.log("DATABASE ERROR @ SQL_JOINUNIT");
-      console.log(err);
-      return;
-    }
-    res.status(200).send;
-  });
+      return res.status(400).send("No such user exists");
   
+    SQL_JOINUNIT_UNITID.get(unitcode, async (err, unitId) => {
+      if (unitId === undefined)
+        return res.status(400).send("No such unit exists");
+    
+      SQL_JOINUNIT_TEST.get(userId.UserId, unitId.UnitId, (err, testrow) => {
+        if (testrow !== undefined)  //Relation already exists
+          return res.status(400).send({error:"User already in unit"});
+        
+        SQL_JOINUNIT.run(userId.UserId, unitId.UnitId, async (err) => {
+          if (err !== null) {
+            res.status(500).send("Database error");
+            console.log("DATABASE ERROR @ SQL_JOINUNIT");
+            console.log(err);
+            return;
+          }
+          res.status(200).send();
+        });
+      });
+    });
+  });
 });
 
 //Make sure this stay at the bottom

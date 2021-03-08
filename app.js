@@ -73,20 +73,20 @@ app.post('/createUser', (req, res) => {
 
   //Check if params are missing
   if (email === undefined || !mailValidator.validate(email))
-    return res.status(400).send({message: "No / Invalid email"});
+    return res.status(400).send({error:"No / Invalid email"});
 
   if (username === undefined || !REGEX_USERNAME.test(username))
-    return res.status(400).send({message: "No / Invalid username"});
+    return res.status(400).send({error:"No / Invalid username"});
 
   if (password === undefined)
-    return res.status(400).send({message: "No password"});
+    return res.status(400).send({error:"No password"});
 
   //Find institution
   const instDomain = email.split("@")[1];
   SQL_CREATEUSER_FIND_INSTITUTION.get(instDomain, async (err, row) => {
     //Checks that a valid institution has been found
     if (row === undefined) 
-      return res.status(400).send({error: "Not a valid university email"});
+      return res.status(400).send({error:"Not a valid university email"});
 
     //Generate salt and then hash password
     const hash = await bcrypt.hash(password, 10);
@@ -95,7 +95,7 @@ app.post('/createUser', (req, res) => {
       if (err === null) //Account successfully created 
         res.status(200).send({token: session.addToken(username)});
       else //Email / Username already taken
-        res.status(400).send({error: "Email / Username already taken"});
+        res.status(400).send({error:"Email / Username already taken"});
     });
   });
 });
@@ -115,17 +115,17 @@ app.post('/isUser', async (req, res) => {
   //This may yet need some tweaks to stop SQL injection
   if (username === undefined || !REGEX_USERNAME.test(username)) {
     if (email === undefined)
-      return res.status(400).send({error: "No username or email field" });
+      return res.status(400).send({error:"No username or email field"});
     else {
       //Check for invalid email
       if (!mailValidator.validate(email))
-        return res.status(400).send({error: "Email Invalid"});
+        return res.status(400).send({error:"Email Invalid"});
     }
   }
     
   //password is hashed on front-end 
   if (password === undefined)
-    return res.status(400).send({error: "No password field" });
+    return res.status(400).send({error:"No password field"});
 
   //need for SQL injection check?
   //Replace undefined parameters with blanks
@@ -135,11 +135,11 @@ app.post('/isUser', async (req, res) => {
 
   SQL_ISUSER.get(params, (err, row) => {
     if (row === undefined)
-      return res.status(400).send({error: 'Invalid credentials'});
+      return res.status(400).send({error:'Invalid credentials'});
 
     bcrypt.compare(password, row.Password, (err, result) =>{
       if (result) res.status(200).send({username: row.Username, token: session.addToken(username)});
-      else res.status(400).send({error: 'Invalid credentials'});
+      else res.status(400).send({error:'Invalid credentials'});
     });
   });
 });
@@ -156,14 +156,14 @@ app.get("/getUserPreview/:username&token=:token", async (req, res) =>{
   const token = req.params.token;
 
   if (username === undefined || !REGEX_USERNAME.test(username))
-    return res.status(400).send({error: "No / Invalid username"});
+    return res.status(400).send({error:"No / Invalid username"});
 
   if (!session.validToken(token))
-    return res.status(400).send({error: "Invalid login"});
+    return res.status(400).send({error:"Invalid login"});
 
   SQL_GETUSERPREVIEW.get(username, (err, row) => {
     if (row === undefined)
-      return res.status(400).send({error: "No user found"});
+      return res.status(400).send({error:"No user found"});
 
     res.status(200).send({username: username, score: row.Score, inst: row.Name});
   });
@@ -194,18 +194,18 @@ app.get("/getUserBrowsing/:username&token=:token", async (req, res) => {
   const token = req.params.token;
 
   if (username === undefined || !REGEX_USERNAME.test(username))
-    return res.status(400).send({error: "No / Invalid username"});
+    return res.status(400).send({error:"No / Invalid username"});
 
   if (!session.checkToken(username, token))
-    return res.status(400).send({error: "Invalid login"});
+    return res.status(400).send({error:"Invalid login"});
 
   SQL_GETUSERBROWSING_UNITS.all(username, async (err, units) => {
     if (units === undefined)
-      return res.status(400).send({error: "SQL_GETUSERBROWSING_UNITS Failed, this shouldn't happen"});
+      return res.status(500).send({error:"SQL_GETUSERBROWSING_UNITS Failed, this shouldn't happen"});
 
     SQL_GETUSERBROWSING_POSTS.all(username, async (err, posts) => {
       if (posts === undefined)
-        return res.status(400).send({error: "SQL_GETUSERBROWSING_UNITS Failed, this shouldn't happen"});
+        return res.status(500).send({error:"SQL_GETUSERBROWSING_UNITS Failed, this shouldn't happen"});
       
       res.status(200).send({unit: units, post: posts});
     });  
@@ -241,24 +241,24 @@ app.get("/getUserInfo/:username&token=:token", async (req, res) =>{
   const token = req.params.token;
 
   if (username === undefined || !REGEX_USERNAME.test(username)) 
-    return res.status(400).send("No / Invalid username");
+    return res.status(400).send({error:"No / Invalid username"});
 
   if (!session.validToken(token))
-    return res.status(400).send("Invalid login");
+    return res.status(400).send({error:"Invalid login"});
 
   SQL_GETUSERINFO_USER.get(username, async (err, user) => {
     if (user === undefined)
-      return res.status(400).send("No user found");
+      return res.status(400).send({error:"No user found"});
 
     SQL_GETUSERINFO_POSTS.all(username, async (err, posts) => {
       if (posts === undefined)
-        return res.status(500).send("Database failure, getting posts");
+        return res.status(500).send({error:"Database failure, getting posts"});
 
       user.posts = posts
 
       SQL_GETUSERINFO_UNITS.all(username, async (err, units) => {
         if (units === undefined)
-          return res.status(500).send("Database failure getting units")
+          return res.status(500).send({error:"Database failure getting units"})
 
         user.units = units
 
@@ -296,37 +296,37 @@ app.post("/createPost", async (req, res) => {
   const description = req.body.description;
 
   if (username === undefined || !REGEX_USERNAME.test(username)) 
-    return res.status(400).send("No / Invalid username");
+    return res.status(400).send({error:"No / Invalid username"});
 
   if (!session.checkToken(username, token)) 
-    return res.status(400).send("Invalid login");
+    return res.status(400).send({error:"Invalid login"});
 
   if (unitcode === undefined || !REGEX_UNITCODE.test(unitcode))
-    return res.status(400).send("Invalid unitcode");
+    return res.status(400).send({error:"Invalid unitcode"});
 
   if (title === undefined || !REGEX_TITLE.test(title)) 
-    return res.status(400).send("Invalid title");
+    return res.status(400).send({error:"Invalid title"});
 
   if (description === undefined || !REGEX_DESCRIPTION.test(description)) 
-    return res.status(400).send("Invalid description");
+    return res.status(400).send({error:"Invalid description"});
 
   if (!req.files || Object.keys(req.files).length === 0) 
-    return res.status(400).send("No files were uploaded");
+    return res.status(400).send({error:"No files were uploaded"});
 
   const file = req.files.upload;
 
   if (!file.name.toLowerCase().endsWith(".pdf"))
-    return res.status(400).send("File not a pdf");
+    return res.status(400).send({error:"File not a pdf"});
 
   const filename = `${username}-${sha1(file.name)}-${Date.now().toString()}.pdf`;
 
   SQL_CREATEPOST_GETID.get([username, unitcode], (err, row) => {
     if (row === undefined) //Row not found
-      return res.status(400).send("User or Unitcode incorrect");
+      return res.status(400).send({error:"User or Unitcode incorrect"});
 
     SQL_CREATEPOST_INSERT.run([title, row.UserId, filename, description, row.UnitId], (err) => {
       if (err !== null) {
-        res.status(500).send("Database error");
+        res.status(500).send({error:"Database error"});
         console.log("DATABASE ERROR @ SQL_CREATE_POST_INSERT");
         console.log(err);
         return;
@@ -335,7 +335,7 @@ app.post("/createPost", async (req, res) => {
       file.mv("react-frontend/build/documents/" + filename, (err) => {
         if (err) { //Error occured, reroll the database changes
           SQL_CREATEPOST_ROLLBACK.run(filename);
-          res.status(500).send("File store error");
+          res.status(500).send({error:"File store error"});
           return;
         }
 
@@ -357,14 +357,14 @@ app.get("/getPost/:file&token=:token", (req, res) => {
   const token = req.params.token;
 
   if (file === undefined || !REGEX_FILE.test(file))
-    return res.status(400).send("Invalid filepath");
+    return res.status(400).send({error:"Invalid filepath"});
 
   if (token === undefined || !session.validToken(token))
-    return res.status(400).send("Invalid token");
+    return res.status(400).send({error:"Invalid token"});
 
   SQL_GETPOST.get(file, (err, row) => {
     if (row === undefined)
-      return res.status(400).send("File not found");
+      return res.status(400).send({error:"File not found"});
 
     res.status(200).send(row);
   });
@@ -389,14 +389,14 @@ app.get("/searchPosts/:search&username=:username&token=:token", (req, res) => {
   const token = req.params.token;
 
   if (search === undefined || !REGEX_TITLE.test(search))
-    return res.status(400).send("Invalid search term");
+    return res.status(400).send({error:"Invalid search term"});
 
   //Username doesn't have to be validated beacuse if it is invalid it will fail the token check
   if (username === undefined)
-    return res.status(400).send("No username")
+    return res.status(400).send({error:"No username"})
 
   if (token === undefined || !session.checkToken(username, token))
-    return res.status(400).send("Invalid token");
+    return res.status(400).send({error:"Invalid token"});
 
   SQL_SEARCHPOSTS.all(['%' + search + '%', username], (err, rows) => {
     res.status(200).send(rows);
@@ -423,14 +423,14 @@ app.get("/getPotentialUnits/:username&token=:token", (req, res) => {
   const token    = req.params.token;
 
   if (username === undefined)
-    return res.status(400).send("No username");
+    return res.status(400).send({error:"No username"});
 
   if (token === undefined || !session.checkToken(username, token))
-    return res.status(400).send("Invalid token");
+    return res.status(400).send({error:"Invalid token"});
 
   SQL_GETPOTENTIALUNITS.all(username, async (err, rows) => {
     if (rows === undefined)
-      return res.status(500).send("Database failure");
+      return res.status(500).send({error:"Database failure"});
 
     res.status(200).send(rows);
   });  
@@ -465,21 +465,21 @@ app.post("/joinUnit", async (req, res) => {
   const token    = req.body.token;
 
   if (username === undefined || !REGEX_USERNAME.test(username)) 
-    return res.status(400).send("No / Invalid username");
+    return res.status(400).send({error:"No / Invalid username"});
 
   if (token === undefined || !session.checkToken(username, token)) 
-    return res.status(400).send("Invalid token");
+    return res.status(400).send({error:"Invalid token"});
 
   if (unitcode === undefined || !REGEX_UNITCODE.test(unitcode))
-    return res.status(400).send("Invalid unitcode");
+    return res.status(400).send({error:"Invalid unitcode"});
 
   SQL_JOINUNIT_USERID.get(username, async (err, userId) => {
     if (userId === undefined)
-      return res.status(400).send("No such user exists");
+      return res.status(400).send({error:"No such user exists"});
   
     SQL_JOINUNIT_UNITID.get(unitcode, async (err, unitId) => {
       if (unitId === undefined)
-        return res.status(400).send("No such unit exists");
+        return res.status(400).send({error:"No such unit exists"});
     
       SQL_JOINUNIT_TEST.get(userId.UserId, unitId.UnitId, (err, testrow) => {
         if (testrow !== undefined)  //Relation already exists
@@ -487,7 +487,7 @@ app.post("/joinUnit", async (req, res) => {
         
         SQL_JOINUNIT.run(userId.UserId, unitId.UnitId, async (err) => {
           if (err !== null) {
-            res.status(500).send("Database error");
+            res.status(500).send({error:"Database error"});
             console.log("DATABASE ERROR @ SQL_JOINUNIT");
             console.log(err);
             return;

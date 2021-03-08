@@ -14,6 +14,7 @@ class Profile extends React.Component {
             profile: null,
             loggedIn:props.loggedIn,
             search:"",
+            unitFilter:""
         };
         this.failCallback = props.failCallback;
         this.getProfileInfo = this.getProfileInfo.bind(this);
@@ -23,11 +24,11 @@ class Profile extends React.Component {
         let response = await fetch("/getUserInfo/"+username+"&token="+token);
         let resdata = await response.json();
         resdata.username = username;
-        if (resdata.inst){
-            this.setState({ profile: resdata,loading: false,loggedIn:true})
-        } else {
+        if (resdata.error){
             this.failCallback()
-            this.setState({ profile: null,loading: true,loggedIn:false})
+            this.setState({ profile: null,loading: false,loggedIn:false})
+        } else {
+            this.setState({ profile: resdata,loading: false,loggedIn:true})
         }
     }
 
@@ -59,12 +60,22 @@ class Profile extends React.Component {
                         <div className="profile-content">
                             <img className="profile-content-picture" alt="profile img" src={this.state.profile.picture}/>
                             <div className="profile-content-username">{this.state.profile.username}</div>
-                            <div className="profile-content-uni">{this.state.profile.inst}</div>
+                            <div className="profile-content-uni">{this.state.profile.Name}</div>
+                            <div>{this.state.profile.Biography}</div>
+                            {this.state.profile.username=
+
+                            }
                             <div className="profile-content-pens"><span role="img" aria-label="pen">🖋️</span> {this.state.profile.score} pens</div>
                         </div>
                         <div className="profile-notes">
                             <div className="profile-notes-input">
                                 <input placeholder="Search for a note..." className="profile-input-search" type="text" value={this.state.search} onChange={this.handleSearch} />
+                                <select value={this.state.unitFilter} onChange={(event) => {this.setState({unitFilter:event.target.value})}}>
+                                    {this.state.profile.units.map((unit,i)=>{(
+                                        <option key={i} value={unit.name}>{unit.name}</option>
+                                        )}
+                                    )}
+                                </select>
                                 {/* TODO: create dropdown component */}
                             </div>
                             <div>

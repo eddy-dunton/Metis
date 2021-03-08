@@ -422,7 +422,7 @@ app.get("/getPotentialUnits/:username&token=:token", (req, res) => {
   const username = req.params.username;
   const token    = req.params.token;
 
-  if(username === undefined)
+  if (username === undefined)
     return res.status(400).send("No username");
 
   if (token === undefined || !session.checkToken(username, token))
@@ -439,19 +439,19 @@ app.get("/getPotentialUnits/:username&token=:token", (req, res) => {
 const SQL_JOINUNIT = db.prepare(`
   INSERT INTO UnitEnrollment (UserId, UnitId)
   VALUES (?, ?)
-`)
+`);
 
 const SQL_GETUNITID = db.prepare(`
   SELECT UnitId
     FROM Unit
     WHERE Unitcode = ?
-`)
+`);
 
 const SQL_GETUSERID = db.prepare(`
   SELECT UserId
     FROM User
     WHERE Username = ?
-`)
+`);
 
 app.post("/joinUnit", async (req, res) => {
   const username = req.params.username;
@@ -472,12 +472,12 @@ app.post("/joinUnit", async (req, res) => {
   SQL_GETUSERID.all(username, async (err, userId) => {
     if (userId === undefined)
       return res.status(500).send("No such user exists");
-  })
+  });
 
   SQL_GETUNITID.all(username, async (err, unitId) => {
     if (unitId === undefined)
       return res.status(500).send("No such unit exists");
-  })
+  });
 
   SQL_JOINUNIT.all(userId, unitId, async (err) => {
     if (err !== null) {
@@ -487,9 +487,9 @@ app.post("/joinUnit", async (req, res) => {
       return;
     }
     res.status(200).send;
-  })
+  });
   
-})
+});
 
 //Make sure this stay at the bottom
 app.get('*', (req,res) =>{

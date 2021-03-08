@@ -227,6 +227,15 @@ const SQL_GETUSERINFO_POSTS = db.prepare(`
     JOIN Unit ON Post.UnitId = Unit.UnitId
   WHERE User.Username = ?;`)
 
+const SQL_GETUSERINFO_UNITS = db.prepare(`
+  SELECT UnitCode, UnitName 
+  FROM Unit 
+    JOIN UnitEnrollment 
+      ON Unit.UnitId = UnitEnrollment.UnitId
+    JOIN User 
+      ON User.UserId = UnitEnrollment.UserId 
+      AND Username = ?;`);
+
 app.get("/getUserInfo/:username&token=:token", async (req, res) =>{
   const username = req.params.username;
   const token = req.params.token;
@@ -237,23 +246,25 @@ app.get("/getUserInfo/:username&token=:token", async (req, res) =>{
   if (!session.validToken(token))
     return res.status(400).send("Invalid login");
 
-  SQL_GETUSERINFO_USER.get(username, async (err, row) => {
-    if (row === undefined)
+  SQL_GETUSERINFO_USER.get(username, async (err, user) => {
+    if (user === undefined)
       return res.status(400).send("No user found");
 
-    let user = {inst: row.Name, score: row.Score, bio: row.Biography, posts:[]};
+    SQL_GETUSERINFO_POSTS.all(username, async (err, posts) => {
+      if (posts === undefined)
+        return res.status(500).send("Database failure, getting posts");
 
-    SQL_GETUSERINFO_POSTS.all(username, async (err, rows) => {
-      if (rows === undefined)
-        return res.status(500).send("Database failure");
+      user.posts = posts
 
-      //Add all posts to ouput
-      rows.forEach(row => user.posts.push({
-        title: row.Title, filepath: row.File, pens: row.Pens, desc: row.Description, downloads: row.Downloads,
-        unit: row.UnitName, unitcode: row.UnitCode}));
-      
-      res.status(200).send(user);
-    })
+      SQL_GETUSERINFO_UNITS.all(username, async (err, units) => {
+        if (units === undefined)
+          return res.status(500).send("Database failure getting units")
+
+        user.units = units
+
+        return res.status(200).send(user);
+      }); 
+    });
   });
 });
 

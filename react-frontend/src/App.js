@@ -8,6 +8,8 @@ import sha256 from 'crypto-js/sha256';
 
 import './App.css';
 
+
+
 import Navbar from './Navbar.js';
 import Home from './Home.js';
 import Reset from './reset-password.js';
@@ -15,6 +17,7 @@ import Modal from './components/Modal.js';
 import Profile from './Profile.js';
 import UploadArea from './components/UploadArea.js';
 import NotLoggedInPage from './notLoggedIn.js'
+import NotePreview from './notePreview.js';
 
 
 class App extends React.Component {
@@ -279,6 +282,7 @@ class App extends React.Component {
                     <Route path="/reset-password" component={Reset} />
                     <Route path="/profile" component={Profile} />
                     <Route path="/" component={Home} />
+                    <Route path="/note-preview" component={NotePreview} />
                 </Switch>
             </div>
         );
@@ -286,22 +290,18 @@ class App extends React.Component {
       else {
         return(
         <div>
-          <NotLoggedInPage loginCallback = {this.login} signInTabs = {this.signInTabs} currentTab = {this.currentTab} />
-          <Modal show={this.state.showLogin} handleClose={this.login}>
-              {/* sets up the tab buttons */}
-              <div className="tabs">
-                  {this.signInTabs.map((tab, i) => (
-                      <button
-                          key={i}
-                          onClick={() => this.setCurrentTab(tab.name)}
-                          className={`clickable ${(tab.name === this.state.currentTab) ? 'active' : ''}`}>
-                          {tab.label}
-                      </button>
-                  ))}
-              </div>
-              {/* line below draws signin/create account based on whats picked */}
-              { this.signInTabs.find(tab => tab.name === this.state.currentTab).content}
-          </Modal>
+
+          <Switch>
+              <Route path="/reset-password" component={Reset} />
+              <Route path="/profile" component={Profile} />
+              <Route path="/note-preview">
+                <NotePreview failCallback ={this.failedRequest} loginCallback = {this.login} uploadCallback = {this.upload}/>
+              </Route>
+              <Route path="/">
+                <NotLoggedInPage loginCallback = {this.login} signInTabs = {this.signInTabs} currentTab = {this.currentTab} />
+              </Route>
+
+          </Switch>
         </div>
         );
       }

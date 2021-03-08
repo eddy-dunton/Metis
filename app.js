@@ -516,6 +516,34 @@ app.post("/logout", async (req, res) => {
   }
 });
 
+const SQL_PENPOST = db.prepare(`
+  UPDATE Post 
+  SET Pens = Pens + 1 
+  WHERE File = ?
+`);
+
+app.post("/penPost", async (req, res) => {
+  const username = req.body.username;
+  const token = req.body.token;
+  const file = req.body.file;
+
+  if (username === undefined)
+    return res.status(400).send({error:"No username"});
+
+  if (token === undefined || !session.checkToken(username, token)) 
+    return res.status(400).send({error:"Invalid token"});
+
+  if (file === undefined || !REGEX_FILE.test(file))
+    return res.status(400).send({error:"Invalid filepath"});
+
+  SQL_PENPOST.run(file, (err) => {
+    if (err !== null)
+      return res.status(500).send({error:"Database error adding pen"});
+
+    return res.status(200).send();
+  });
+});
+
 //Make sure this stay at the bottom
 app.get('*', (req,res) =>{
   res.sendFile(__dirname+'/react-frontend/build/index.html');

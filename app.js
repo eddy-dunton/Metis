@@ -403,23 +403,19 @@ app.get("/searchPosts/:search&username=:username&token=:token", (req, res) => {
   });
 });
 
-app.get('*', (req,res) =>{
-  res.sendFile(__dirname+'/react-frontend/build/index.html');
-});
-
 const SQL_GETPOTENTIALUNITS = db.prepare(`
   SELECT SUBQUERY.UnitName, SUBQUERY.UnitCode
-    FROM
-    (
-      SELECT Institution.InstitutionId AS InstitutionId, Unit.UnitCode AS UnitCode, Unit.UnitName AS UnitName
-      FROM Institution
-        JOIN Unit
-        ON Institution.InstitutionId = Unit.InstitutionId
-    ) AS SUBQUERY
-      JOIN User
-      ON  SUBQUERY.InstitutionId = User.InstitutionId
-        WHERE User.Username = ?`
-  )
+  FROM
+  (
+    SELECT Institution.InstitutionId AS InstitutionId, Unit.UnitCode AS UnitCode, Unit.UnitName AS UnitName
+    FROM Institution
+      JOIN Unit
+      ON Institution.InstitutionId = Unit.InstitutionId
+  ) AS SUBQUERY
+    JOIN User
+    ON  SUBQUERY.InstitutionId = User.InstitutionId
+      WHERE User.Username = ?`
+  );
 
 //gets list of all unit in a given institution
 app.get("/getPotentialUnits/:username&token=:token", (req, res) => {
@@ -437,10 +433,8 @@ app.get("/getPotentialUnits/:username&token=:token", (req, res) => {
       return res.status(500).send("Database failure");
 
     res.status(200).send(rows);
-  })
-    
-})
-
+  });  
+});
 
 const SQL_JOINUNIT = db.prepare(`
   INSERT INTO UnitEnrollment (UserId, UnitId)
@@ -496,5 +490,10 @@ app.post("/joinUnit", async (req, res) => {
   })
   
 })
+
+//Make sure this stay at the bottom
+app.get('*', (req,res) =>{
+  res.sendFile(__dirname+'/react-frontend/build/index.html');
+});
 
 app.listen(3000, () => console.log("Listening"));

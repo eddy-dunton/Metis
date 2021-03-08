@@ -23,11 +23,11 @@ class Profile extends React.Component {
         let response = await fetch("/getUserInfo/"+username+"&token="+token);
         let resdata = await response.json();
         resdata.username = username;
-        if (resdata.inst){
-            this.setState({ profile: resdata,loading: false,loggedIn:true})
-        } else {
+        if (resdata.error){
             this.failCallback()
-            this.setState({ profile: null,loading: true,loggedIn:false})
+            this.setState({ profile: null,loading: false,loggedIn:false})
+        } else {
+            this.setState({ profile: resdata,loading: false,loggedIn:true})
         }
     }
 

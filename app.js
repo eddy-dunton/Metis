@@ -339,7 +339,7 @@ app.post("/createPost", async (req, res) => {
           return;
         }
 
-        res.status(200).send(filename)
+        res.status(200).send({file: filename})
       });
     }); 
   });

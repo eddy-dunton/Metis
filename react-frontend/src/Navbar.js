@@ -72,7 +72,7 @@ class Navbar extends React.Component {
                                 </Link>
                                 <div className="navbar-profile-content" >
                                     <div style={{display:"flex"}}>
-                                    <Link to={"/profile/"+this.state.profile.username} className="navbar-profile-name">{this.state.profile.username}</Link>
+                                        <Link to={"/profile/"+this.state.profile.username} className="navbar-profile-name clickable">{this.state.profile.username}</Link>
                                         <div className="clickable" style={{alignSelf:"center", marginLeft:"4px"}}>v</div>
                                     </div>
                                     <div className="navbar-profile-uni">{this.state.profile.inst}</div>

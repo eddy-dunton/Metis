@@ -1,5 +1,4 @@
 import React from 'react';
-import { Route, Switch, Link } from 'react-router-dom'
 
 //https://blog.logrocket.com/react-router-dom-set-up-essential-components-parameterized-routes-505dc93642f1/
 
@@ -8,13 +7,6 @@ import './nlicss.css';
 import logo from './images/logo.svg';
 import SUPic1 from './images/signUpPic1.png';
 import SUPic2 from './images/signUpPic2.png';
-
-import Navbar from './Navbar.js';
-import Home from './Home.js';
-import Reset from './reset-password.js';
-import Modal from './components/Modal.js';
-import UploadArea from './components/UploadArea.js';
-
 
 class NotLoggedInPage extends React.Component {
 
@@ -29,7 +21,6 @@ class NotLoggedInPage extends React.Component {
     this.currentTab = props.currentTab;
     this.signInTabs = props.signInTabs;
     this.setCurrentTab = this.setCurrentTab.bind(this);
-    console.log(this.signInTabs);
   }
 
   setCurrentTab(cur) {
@@ -39,13 +30,6 @@ class NotLoggedInPage extends React.Component {
   render() {
     return(
       <div className = "app">
-        <div className = "navbar">
-        <Link to="/" className="navbar-logo clickable">
-            <img src={logo} alt="Metis Logo" />
-            <div>metis</div>
-        </Link>
-
-        </div>
 
         <div className = "display-block top-panel">
           <div className = "text-panel">

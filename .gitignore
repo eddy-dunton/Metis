@@ -1,3 +1,7 @@
+# User added
+# Tmp created by express-fileupload
+tmp/
+
 # Logs
 logs
 *.log
@@ -102,3 +106,7 @@ dist
 
 # TernJS port file
 .tern-port
+
+#stop vim
+.swp
+

@@ -4,6 +4,9 @@ import Cookies from 'universal-cookie';
 
 import sha256 from 'crypto-js/sha256';
 
+import pdf from './images/pdf.svg';
+import cross from './images/cross.svg';
+
 //https://blog.logrocket.com/react-router-dom-set-up-essential-components-parameterized-routes-505dc93642f1/
 
 import './App.css';
@@ -30,8 +33,11 @@ class App extends React.Component {
             loggedIn: this.cookies.get('token') ? true : false,
             showLogin: false,
             showUpload: false,
-            currentTab:'signin'
+            currentTab:'signin',
+            profile:null,
+            files:[]
         };
+
 
         this.login = this.login.bind(this);
         this.upload = this.upload.bind(this);
@@ -41,6 +47,13 @@ class App extends React.Component {
         this.signin = this.signin.bind(this);
         this.hashPassword = this.hashPassword.bind(this);
         this.createAccount = this.createAccount.bind(this);
+        this.publishFile = this.publishFile.bind(this);
+        this.getProfileInfo = this.getProfileInfo.bind(this);
+
+        if (this.username){
+            this.getProfileInfo()
+        }
+
         //https://www.devaradise.com/react-tabs-tutorial
         this.signInTabs = [
             {
@@ -184,6 +197,8 @@ class App extends React.Component {
             this.cookies.set('token', resjson.token, { path: '/' });
             this.cookies.set('username', this.username, { path: '/' });
             this.login()
+
+            this.getProfileInfo()
         }
     }
 
@@ -219,7 +234,19 @@ class App extends React.Component {
             this.cookies.set('token', resjson.token, { path: '/' });
             this.cookies.set('username', resjson.username, { path: '/' });
             this.login()
+            this.getProfileInfo()
         }
+    }
+
+    async getProfileInfo(){
+            let response = await fetch("/getUserInfo/"+this.state.username+"&token="+this.state.token);
+            let resdata = await response.json();
+            if (resdata.error){
+                this.failedRequest()
+                this.setState({ profile: null })
+            } else {
+                this.setState({ profile: resdata})
+            }
     }
 
     failedRequest(){
@@ -228,32 +255,52 @@ class App extends React.Component {
         this.cookies.remove('token')
     }
 
-    login(e) {
+    async login(e) {
         this.setState({ showLogin: !this.state.showLogin});
     }
 
     upload() {
-        this.setState({ showUpload: !this.state.showUpload });
+        if (this.state.profile){
+            this.setState({ showUpload: !this.state.showUpload });
+        } else {
+            this.getProfileInfo()
+        }
+    }
+
+    async publishFile(event){
+        let no = event.target.id.split("button")[1]
+        let title =document.getElementById("title"+no).value
+        let module = document.getElementById("module"+no).value
+        let description = document.getElementById("description"+no).value
+        let formData = new FormData();
+        formData.append('upload', this.state.files[no])
+        formData.append('username', this.state.username)
+        formData.append('token', this.state.token)
+        formData.append('unitcode', module)
+        formData.append('title', title)
+        formData.append('description', description)
+        let response = await fetch("/createPost", {
+            method:"POST",
+            body: formData,
+        })
+        console.log(await response.json())
     }
 
     fileUploaded(files) {
+        console.log(files)
         if (files){
             if (files.length !== 0){
-                /* TODO do someting with file*/
-                //probably something useful here
-                //https://developer.mozilla.org/en-US/docs/Web/API/File/Using_files_from_web_applications
-                //https://attacomsian.com/blog/uploading-files-using-fetch-api -- fetch is so op
-                for(var i=0;i<files.length;i++){
-                    console.log(files[i])
-                    console.log(URL.createObjectURL(files[i]))
+                for(let i=0;i<files.length;i++){
+                    if(!this.state.files.find(x => x.name === files[i].name)){
+                        this.state.files.push(files[i])
+                        this.setState({files:this.state.files})
+                    }
                 }
             }
         }
     };
 
-    //<Route path="/" component={} />
     render() {
-      if(this.state.loggedIn){
         return (
             <div className="app">
                 <Navbar token={this.state.token} failCallback={this.failedRequest} username={this.state.username} loggedIn={this.state.loggedIn} uploadCallback={this.upload} loginCallback={this.login} />
@@ -276,35 +323,43 @@ class App extends React.Component {
                 {/* modal is initially hidden and shown when this.upload is called */}
                 <Modal className={"uploadModal"} show={this.state.showUpload} handleClose={this.upload}>
                     <UploadArea handleDrop={this.fileUploaded} filetype="PDF" />
+                    <div className="queued-files">Queued Files</div>
+                    <div className="uploaded-files">
+                        {this.state.files.map((file,i) => (
+                            <section key={i} className="file-upload-section">
+                                <div className="file-upload-header">
+                                    <img alt="pdf" src={pdf}/>
+                                    <div className="file-upload-filename">{file.name}</div> 
+                                </div> 
+                                <div className="file-upload-inputs">
+                                    <div className="file-upload-title-module">
+                                        <input id={"title"+i} className="file-upload-title" placeholder="Title... (required)"/>
+                                        <select id={"module"+i} className="file-upload-module" onChange={(event) => {this.setState({unitFilter:event.target.value})}}>
+                                            {this.state.profile.units.map((unit,i)=>{return (
+                                                <option key={i} value={unit.UnitCode}>{unit.UnitCode}</option>
+                                            )})}
+                                        </select>
+                                    </div>
+                                    <textarea id={"description"+i} type="textarea" className="file-upload-description" placeholder="Description... (required)"/>
+                                    <button id={"button"+i} onClick={this.publishFile}>Publish</button>
+                                </div>
+                                <img src={cross} alt="Close" className="file-upload-close clickable hover" onClick={() => {let temp=this.state.files;
+                                    temp.splice(i,1);
+                                    this.setState({files:temp})
+                                }}/>
+                            </section> 
+                        ))}
+                    </div> 
                 </Modal>
                 {/* part of react router handles different paths given to it */}
                 <Switch>
                     <Route path="/reset-password" component={Reset} />
-                    <Route path="/profile" component={Profile} />
-                    <Route path="/" component={Home} />
-                    <Route path="/note-preview" component={NotePreview} />
+                    <Route path="/profile/:username" render={(data) => <Profile token={this.state.token} failCallback={this.failedRequest} myusername={this.state.username} username={data.match.params.username} loggedIn={this.state.loggedIn}/>}/>
+                    <Route path="/note/:noteid" component={NotePreview} />
+                    <Route path="/" render={(data) => this.state.loggedIn ? <Home/> : <NotLoggedInPage loginCallback = {this.login} signInTabs = {this.signInTabs} currentTab = {this.currentTab} />} />
                 </Switch>
             </div>
         );
-      }
-      else {
-        return(
-        <div>
-
-          <Switch>
-              <Route path="/reset-password" component={Reset} />
-              <Route path="/profile" component={Profile} />
-              <Route path="/note-preview">
-                <NotePreview failCallback ={this.failedRequest} loginCallback = {this.login} uploadCallback = {this.upload}/>
-              </Route>
-              <Route path="/">
-                <NotLoggedInPage loginCallback = {this.login} signInTabs = {this.signInTabs} currentTab = {this.currentTab} />
-              </Route>
-
-          </Switch>
-        </div>
-        );
-      }
 
     }
 }

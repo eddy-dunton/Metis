@@ -11,12 +11,16 @@ import cross from './images/cross.svg';
 
 import './App.css';
 
+
+
 import Navbar from './Navbar.js';
 import Home from './Home.js';
 import Reset from './reset-password.js';
 import Modal from './components/Modal.js';
 import Profile from './Profile.js';
 import UploadArea from './components/UploadArea.js';
+import NotLoggedInPage from './notLoggedIn.js'
+import NotePreview from './notePreview.js';
 
 
 class App extends React.Component {
@@ -248,7 +252,7 @@ class App extends React.Component {
     failedRequest(){
         this.setState({ token:'' , username: '', loggedIn: false});
         this.cookies.remove('username')
-        this.cookies.remove('token') 
+        this.cookies.remove('token')
     }
 
     async login(e) {
@@ -298,6 +302,7 @@ class App extends React.Component {
 
     //<Route path="/" component={} />
     render() {
+      if(this.state.loggedIn){
         return (
             <div className="app">
                 <Navbar token={this.state.token} failCallback={this.failedRequest} username={this.state.username} loggedIn={this.state.loggedIn} uploadCallback={this.upload} loginCallback={this.login} />
@@ -306,9 +311,9 @@ class App extends React.Component {
                     {/* sets up the tab buttons */}
                     <div className="tabs">
                         {this.signInTabs.map((tab, i) => (
-                            <button 
+                            <button
                                 key={i}
-                                onClick={() => this.setCurrentTab(tab.name)} 
+                                onClick={() => this.setCurrentTab(tab.name)}
                                 className={`clickable ${(tab.name === this.state.currentTab) ? 'active' : ''}`}>
                                 {tab.label}
                             </button>
@@ -353,9 +358,30 @@ class App extends React.Component {
                     <Route path="/reset-password" component={Reset} />
                     <Route path="/profile/:username" render={(data) => <Profile token={this.state.token} failCallback={this.failedRequest} myusername={this.state.username} username={data.match.params.username} loggedIn={this.state.loggedIn}/>}/>
                     <Route path="/" component={Home} />
+                    <Route path="/note-preview" component={NotePreview} />
                 </Switch>
             </div>
         );
+      }
+      else {
+        return(
+        <div>
+
+          <Switch>
+              <Route path="/reset-password" component={Reset} />
+              <Route path="/profile" component={Profile} />
+              <Route path="/note-preview">
+                <NotePreview failCallback ={this.failedRequest} loginCallback = {this.login} uploadCallback = {this.upload}/>
+              </Route>
+              <Route path="/">
+                <NotLoggedInPage loginCallback = {this.login} signInTabs = {this.signInTabs} currentTab = {this.currentTab} />
+              </Route>
+
+          </Switch>
+        </div>
+        );
+      }
+
     }
 }
 

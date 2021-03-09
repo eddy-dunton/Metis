@@ -1,43 +1,21 @@
 import React from 'react';
-import { Route, Switch, Link } from 'react-router-dom'
 
 //https://blog.logrocket.com/react-router-dom-set-up-essential-components-parameterized-routes-505dc93642f1/
 
 import './App.css';
 import './nlicss.css';
 import './previewTempCSS.css';
-import logo from './images/logo.svg';
 import defaultPP from './images/defaultProfPic2.png';
 
-import Navbar from './Navbar.js';
-import Modal from './components/Modal.js';
-import Cookies from 'universal-cookie';
 import Comment from './comment.js';
 
 
 class NotePreview extends React.Component {
-  constructor(props)
-  {
-    super(props)
-    this.cookies = new Cookies();
-    this.state = {
-      token: this.cookies.get('token'),
-      username: this.cookies.get('username'),
-      loggedIn: this.cookies.get('token') ? true : false
-    }
-    this.failedRequest = this.props.failedRequest;
-    this.uploadCallback = this.props.uploadCallback;
-    this.loginCallback = this.props.loginCallback;
-  }
-
   render() {
     return (
       <div className="app">
-        <Navbar token={this.state.token} failCallback={this.failedRequest} username={this.state.username} loggedIn={this.state.loggedIn} uploadCallback={this.upload} loginCallback={this.login} />
         <div className = "breadcrumbs">
           <div className ="bc-item bc-label">University of Bath</div>
-          <div className ="bc-item bc-dot" />
-          <div className ="bc-item bc-label">Computer Science</div>
           <div className ="bc-item bc-dot" />
           <div className ="bc-item bc-label">CM20255</div>
           <div className ="bc-item bc-dot" />

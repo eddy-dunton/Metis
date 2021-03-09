@@ -300,9 +300,7 @@ class App extends React.Component {
         }
     };
 
-    //<Route path="/" component={} />
     render() {
-      if(this.state.loggedIn){
         return (
             <div className="app">
                 <Navbar token={this.state.token} failCallback={this.failedRequest} username={this.state.username} loggedIn={this.state.loggedIn} uploadCallback={this.upload} loginCallback={this.login} />
@@ -357,30 +355,11 @@ class App extends React.Component {
                 <Switch>
                     <Route path="/reset-password" component={Reset} />
                     <Route path="/profile/:username" render={(data) => <Profile token={this.state.token} failCallback={this.failedRequest} myusername={this.state.username} username={data.match.params.username} loggedIn={this.state.loggedIn}/>}/>
-                    <Route path="/" component={Home} />
-                    <Route path="/note-preview" component={NotePreview} />
+                    <Route path="/note/:noteid" component={NotePreview} />
+                    <Route path="/" render={(data) => this.state.loggedIn ? <Home/> : <NotLoggedInPage loginCallback = {this.login} signInTabs = {this.signInTabs} currentTab = {this.currentTab} />} />
                 </Switch>
             </div>
         );
-      }
-      else {
-        return(
-        <div>
-
-          <Switch>
-              <Route path="/reset-password" component={Reset} />
-              <Route path="/profile" component={Profile} />
-              <Route path="/note-preview">
-                <NotePreview failCallback ={this.failedRequest} loginCallback = {this.login} uploadCallback = {this.upload}/>
-              </Route>
-              <Route path="/">
-                <NotLoggedInPage loginCallback = {this.login} signInTabs = {this.signInTabs} currentTab = {this.currentTab} />
-              </Route>
-
-          </Switch>
-        </div>
-        );
-      }
 
     }
 }

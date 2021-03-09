@@ -1,5 +1,5 @@
 #!/bin/sh
-get reset --hard
+git reset --hard
 git checkout prod
 git pull
 npm i

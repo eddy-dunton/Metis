@@ -1,9 +1,7 @@
 import React from 'react';
 import './App.css';
 
-import dots from './images/dots.svg';
-import arrow from './images/arrow.svg';
-import pdf from './images/pdf.svg';
+import Note from './components/note.js';
 
 class Profile extends React.Component {
 
@@ -48,15 +46,15 @@ class Profile extends React.Component {
     handleSearch(event) {    this.setState({search: event.target.value});  }
 
     componentDidMount() {
+        this.setState({ loggedIn: this.props.loggedIn,myusername:this.props.myusername,token:this.props.token })
         if (this.props.loggedIn){
-            this.setState({ loggedIn: this.props.loggedIn,myusername:this.props.myusername,token:this.props.token })
             this.getProfileInfo(this.props.username, this.props.token)
         }
     }
     componentDidUpdate(prevProps) {
-        if (prevProps.loggedIn !== this.props.loggedIn){
+        if (prevProps.username !== this.props.username || prevProps.loggedIn !==this.props.loggedIn){
+            this.setState({ loggedIn: this.props.loggedIn,myusername:this.props.myusername,token:this.props.token })
             if (this.props.loggedIn){
-                this.setState({ loggedIn: this.props.loggedIn,myusername:this.props.myusername,token:this.props.token })
                 this.getProfileInfo(this.props.username, this.props.token)
             }
         }
@@ -117,27 +115,11 @@ class Profile extends React.Component {
                                 {this.state.profile.posts.map((note, i) => {
                                     if (note.Title.includes(this.state.search)) {
                                         if (this.state.unitFilter === "all" || note.UnitCode === this.state.unitFilter ){
-                                        return (
-                                            <div className="profile-note" key={i}>
-                                                <div className="profile-note-content">
+                                            console.log(note)
+                                            return (
 
-                                                    <div className="profile-note-left">
-                                                        <img className="profile-note-pdf" alt="PDF" src={pdf}/>
-                                                        <div className="profile-note-name">{note.Title}</div>
-                                                    </div>
-                                                    <div className="profile-note-right">
-                                                        <div className="profile-note-module">{note.UnitCode}</div>
-                                                        <img width="32px" alt="choice dots" src={dots}/>
-                                                        <img width="32px" alt="open note" src={arrow}/>
-                                                    </div>
-                                                </div>
-                                                <div className="profile-note-under">
-                                                    <div><span role="img" aria-label="pen">🖋️</span> {note.Pens} pens</div>
-                                                    <div>{note.Downloads} downloads</div>
-                                                    {/*<div>{note.comments} comments</div>*/}
-                                                </div>
-                                            </div>
-                                        )}
+                                                <Note key={i} title={note.Title} unitcode={note.UnitCode} pens={note.Pens} downloads={note.Downloads} description={note.Description}/>
+                                            )}
                                     }
                                 })}
                             </div>

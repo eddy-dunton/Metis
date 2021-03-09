@@ -250,9 +250,9 @@ class App extends React.Component {
     }
 
     failedRequest(){
-        this.setState({ token:'' , username: '', loggedIn: false});
         this.cookies.remove('username')
         this.cookies.remove('token')
+        this.setState({ token:'' , username: '', loggedIn: false});
     }
 
     async login(e) {
@@ -260,11 +260,8 @@ class App extends React.Component {
     }
 
     upload() {
-        if (this.state.profile){
-            this.setState({ showUpload: !this.state.showUpload });
-        } else {
-            this.getProfileInfo()
-        }
+        this.getProfileInfo()
+        this.setState({ showUpload: !this.state.showUpload });
     }
 
     async publishFile(event){

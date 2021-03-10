@@ -471,52 +471,68 @@ body {
     display:flex;
     justify-content:space-evenly;
 }
-.profile-note{}
-.profile-note-content{
+.note-preview{}
+.note-preview-content{
+    background: #fff;
+    border-radius:15px;
+    box-shadow: 2px 2px 0 4px rgba(255,255,255,0.25);
+    margin: 16px 0px;
+}
+
+.note-preview-header{
+    text-align: center;
+    padding:16px;
     display:flex;
     flex-direction:row;
     justify-content: space-between;
-    padding:16px;
-    background:#FFFFFF;
-    border-radius:15px;
-    box-shadow: 2px 2px 0px 4px rgba(255, 255, 255, 0.25);
-    text-align: center;
     line-height: 48px;  
-    margin: 16px 0px;
 }
-.profile-note-content >* >  *{
+
+.note-preview-header >* >  *{
     display:flex;
     align-items:center;
     margin: 0px 4px;
 }
-.profile-note-pdf{
+
+.note-preview-pdf{
 
 }
-.profile-note-name{
+.note-preview-name{
     font-family: 'Josefin Sans', sans-serif;
-
     overflow: hidden; 
     text-overflow: ellipsis;
     white-space: nowrap;
     font-size:32px;
 }
-.profile-note-left{
+.note-preview-left{
     display:flex;
     flex-direction:row;
 }
-.profile-note-right{
+.note-preview-right{
     display:flex;
     flex-direction:row;
 }
-.profile-note-module{
+.note-preview-module{
     font-family: 'Roboto', sans-serif;
 }
-.profile-note-under{
+
+.note-preview-description{
+    border-radius:0px 0px 15px 15px;
+    background:#E5E5E5;
+    font-family: 'Alegreya', serif;
+    font-size:24px;
+    margin-bottom:16px;
+    padding:8px;
+    color:#222222;
+}
+
+.note-preview-under{
     display:flex;
     flex-direction:row;
     justify-content:flex-end;
 }
-.profile-note-under > * {
+
+.note-preview-under > * {
     padding:4px;
     margin-left:8px;
     border-radius:5px;

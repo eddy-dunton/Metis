@@ -115,12 +115,10 @@ class Profile extends React.Component {
                                 {this.state.profile.posts.map((note, i) => {
                                     if (note.Title.includes(this.state.search)) {
                                         if (this.state.unitFilter === "all" || note.UnitCode === this.state.unitFilter ){
-                                            console.log(note)
                                             return (
-
-                                                <Note key={i} title={note.Title} unitcode={note.UnitCode} pens={note.Pens} downloads={note.Downloads} description={note.Description}/>
+                                                <Note key={i} title={note.Title} id={note.File} unitcode={note.UnitCode} pens={note.Pens} downloads={note.Downloads} description={note.Description}/>
                                             )}
-                                    }
+                                     }
                                 })}
                             </div>
                         </div>

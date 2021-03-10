@@ -3,7 +3,6 @@ import React from 'react';
 //https://blog.logrocket.com/react-router-dom-set-up-essential-components-parameterized-routes-505dc93642f1/
 
 import './App.css';
-import './nlicss.css';
 import './previewTempCSS.css';
 import defaultPP from './images/defaultProfPic2.png';
 
@@ -74,7 +73,7 @@ class NotePreview extends React.Component {
                             <div className="main-body-downloads">
                                 <p>{this.state.note.Downloads} downloads</p>
                             </div>
-                            <button className="download-button">DOWNLOAD</button>
+                            <button onClick={() => {window.open('/documents/'+this.props.path)}} className="download-button">DOWNLOAD</button>
                         </div>
                         <div className="main-pdf-preview">
                         </div>

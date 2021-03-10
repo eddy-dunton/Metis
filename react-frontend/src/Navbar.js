@@ -105,7 +105,6 @@ class Navbar extends React.Component {
                                 }} className="hover clickable">SIGN OUT</div> 
                             </div>
                         ) : (<></>)}
-                }
             </>
         );
 }

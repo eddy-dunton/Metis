@@ -380,7 +380,8 @@ body {
 }
 
 .accounts button{
-    margin:0px auto; display:block;
+    margin:0px auto; 
+    display:block;
     font-size:20px;
     color: #00A3FF;
     background:#CCECFF;

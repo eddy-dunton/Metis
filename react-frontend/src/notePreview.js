@@ -11,6 +11,42 @@ import Comment from './comment.js';
 
 
 class NotePreview extends React.Component {
+    async getProfileInfo(username, token) {
+        let response = await fetch("/getUserInfo/"+username+"&token="+token);
+        let resdata = await response.json();
+        resdata.username = username;
+        if (resdata.error){
+            this.failCallback()
+            this.setState({ profile: null,loading: false,loggedIn:false})
+        } else {
+            this.setState({ profile: resdata,loading: false,loggedIn:true})
+        }
+        if (username === this.state.myusername){
+            let response = await fetch("/getPotentialUnits/"+username+"&token="+token);
+            let resdata = await response.json();
+            if (resdata.error){
+                this.failCallback()
+                this.setState({ profile: null,loading: false,loggedIn:false})
+            } else {
+                this.setState({possUnits:resdata})
+            }
+        }
+    }
+
+    componentDidMount() {
+        this.setState({ loggedIn: this.props.loggedIn,myusername:this.props.myusername,token:this.props.token })
+        if (this.props.loggedIn){
+            this.getProfileInfo(this.props.username, this.props.token)
+        }
+    }
+    componentDidUpdate(prevProps) {
+        if (prevProps.username !== this.props.username || prevProps.loggedIn !==this.props.loggedIn){
+            this.setState({ loggedIn: this.props.loggedIn,myusername:this.props.myusername,token:this.props.token })
+            if (this.props.loggedIn){
+                this.getProfileInfo(this.props.username, this.props.token)
+            }
+        }
+    }
   render() {
     return (
       <div className="app">

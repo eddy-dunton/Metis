@@ -361,7 +361,7 @@ class App extends React.Component {
                 <Switch>
                     <Route path="/reset-password" component={Reset} />
                     <Route path="/profile/:username" render={(data) => <Profile token={this.state.token} failCallback={this.failedRequest} myusername={this.state.username} username={data.match.params.username} loggedIn={this.state.loggedIn}/>}/>
-                    <Route path="/note/:noteid" render={(data) => <NotePreview id={data} token={this.state.token} failCallback={this.failedRequest}/>} />
+                    <Route path="/note/:noteid" render={(data) => <NotePreview path={data.match.params.noteid} token={this.state.token} failCallback={this.failedRequest}/>} />
                     <Route path="/" render={(data) => this.state.loggedIn ? <Home/> : <NotLoggedInPage loginModalShow={this.login} setTab={this.setCurrentTab} />} />
                 </Switch>
             </div>

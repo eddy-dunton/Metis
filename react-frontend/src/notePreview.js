@@ -11,99 +11,99 @@ import Comment from './comment.js';
 
 
 class NotePreview extends React.Component {
-    async getProfileInfo(username, token) {
-        let response = await fetch("/getUserInfo/"+username+"&token="+token);
+    state = {
+        note:null,
+        loading:true,
+    }
+    async getNoteInfo(path, token) {
+            this.setState({ loading:true })
+        let response = await fetch("/getPost/"+path+"&token="+token);
         let resdata = await response.json();
-        resdata.username = username;
+        console.log(resdata)
         if (resdata.error){
-            this.failCallback()
-            this.setState({ profile: null,loading: false,loggedIn:false})
+            this.props.failCallback()
+            this.setState({ note:null,loading:false })
         } else {
-            this.setState({ profile: resdata,loading: false,loggedIn:true})
-        }
-        if (username === this.state.myusername){
-            let response = await fetch("/getPotentialUnits/"+username+"&token="+token);
-            let resdata = await response.json();
-            if (resdata.error){
-                this.failCallback()
-                this.setState({ profile: null,loading: false,loggedIn:false})
-            } else {
-                this.setState({possUnits:resdata})
-            }
+            this.setState({ note:resdata,loading:false  })
         }
     }
 
     componentDidMount() {
-        this.setState({ loggedIn: this.props.loggedIn,myusername:this.props.myusername,token:this.props.token })
-        if (this.props.loggedIn){
-            this.getProfileInfo(this.props.username, this.props.token)
+        console.log(this.props)
+        if (this.props.token){
+            this.getNoteInfo(this.props.path, this.props.token)
         }
     }
     componentDidUpdate(prevProps) {
-        if (prevProps.username !== this.props.username || prevProps.loggedIn !==this.props.loggedIn){
-            this.setState({ loggedIn: this.props.loggedIn,myusername:this.props.myusername,token:this.props.token })
-            if (this.props.loggedIn){
-                this.getProfileInfo(this.props.username, this.props.token)
-            }
+        if (prevProps.token !== this.props.token || prevProps.path !== this.props.path){
+            this.getNoteInfo(this.props.path, this.props.token)
         }
     }
-  render() {
-    return (
-      <div className="app">
-        <div className = "breadcrumbs">
-          <div className ="bc-item bc-label">University of Bath</div>
-          <div className ="bc-item bc-dot" />
-          <div className ="bc-item bc-label">CM20255</div>
-          <div className ="bc-item bc-dot" />
-          <div className ="bc-item bc-label">This Note</div>
-        </div>
-        <div className = "profile-preview">
-          <img src={defaultPP} alt="Profile Picture" />
-          <div className = "profile-info">
-            <h1>Jerry Johnson
-              <p className = "inline">·7h</p>
-            </h1>
-            <p>Maths and Computer Science</p>
-          </div>
-          <div className = "pens">
-            <div><span role="img" aria-label="pen">🖋️</span> 187 pens</div>
-          </div>
-        </div>
-        <div className = "main-preview">
-          <div className="main-note-info">
-            <div className="main-pdf-icon">
-              <p>PDF</p>
-            </div>
-              <h1>Pushdown automata</h1>
-          </div>
-          <div className = "main-note-body">
-            <p>
-              We study a new and more powerful model of computation which comes with a simple form of memory. This is called the pushdown automaton (PDA), and is essentially a NFA equipped with a "stack", which allows us to "pop" and "push" words from our memory as we move through the automaton. We demonstrate the power of new kind of automaton by showing that any context-free language is accepted by a suitable PDA.
-            </p>
-            <div className="main-body-downloads">
-              <p>23 downloads</p>
-            </div>
-            <button className="download-button">DOWNLOAD (3.5mb)</button>
-          </div>
-          <div className="main-pdf-preview">
-          </div>
-        </div>
-        <div className = "join-strips">
-          <div className="strip left" />
-          <div className="strip right" />
-        </div>
-        <div className = "comment-preview">
-          <div className = "comment-number">
-            <p>3 Comments</p>
-          </div>
-          <input  placeholder="Leave a Comment"/>
-          <Comment author="James Jameson" text = "Nice notes!" profilePicture ={defaultPP} time = "7h" />
-          <Comment author ="Deez Nuts" text = "Oh something came in the mail today? Deez nuts. [pause for laughter]. GOTEEEEMMMM" profilePicture = {defaultPP} time ="5m" />
-          <Comment author="Annoyingly Long Name" text = "hi uwu :3" profilePicture ={defaultPP} time = "2d" />
-        </div>
-      </div>
-    );
-  }
+    render() {
+        if (this.props.token && this.state.note){
+            return (
+                <div className="app">
+                    <div className = "breadcrumbs">
+                        <div className ="bc-item bc-label">{this.state.note.UnitCode} ({this.state.note.UnitName})</div>
+                        <div className ="bc-item bc-dot" />
+                        <div className ="bc-item bc-label">This Note</div>
+                    </div>
+                    <div className = "profile-preview">
+                        <img src={defaultPP} alt="Profile Picture" />
+                        <div className = "profile-info">
+                            <h1>Jerry Johnson
+                                <p className = "inline">·7h</p>
+                            </h1>
+                            <p>{this.state.note.UnitName}</p>
+                        </div>
+                        <div className = "pens">
+                            <div><span role="img" aria-label="pen">🖋️</span> {this.state.note.Pens} pens</div>
+                        </div>
+                    </div>
+                    <div className = "main-preview">
+                        <div className="main-note-info">
+                            <div className="main-pdf-icon">
+                                <p>PDF</p>
+                            </div>
+                            <h1>{this.state.note.Title}</h1>
+                        </div>
+                        <div className = "main-note-body">
+                            <p>
+                                {this.state.note.Description}
+                            </p>
+                            <div className="main-body-downloads">
+                                <p>{this.state.note.Downloads} downloads</p>
+                            </div>
+                            <button className="download-button">DOWNLOAD</button>
+                        </div>
+                        <div className="main-pdf-preview">
+                        </div>
+                    </div>
+                    <div className = "join-strips">
+                        <div className="strip left" />
+                        <div className="strip right" />
+                    </div>
+                    <div className = "comment-preview">
+                        <div className = "comment-number">
+                            <p>3 Comments</p>
+                        </div>
+                        <input  placeholder="Leave a Comment"/>
+                        <Comment author="James Jameson" text = "Nice notes!" profilePicture ={defaultPP} time = "7h" />
+                        <Comment author ="Deez Nuts" text = "Oh something came in the mail today? Deez nuts. [pause for laughter]. GOTEEEEMMMM" profilePicture = {defaultPP} time ="5m" />
+                        <Comment author="Annoyingly Long Name" text = "hi uwu :3" profilePicture ={defaultPP} time = "2d" />
+                    </div>
+                </div>
+            )
+
+        } else {
+            if (this.state.loading){
+                return (<div>loading...</div>)
+            } else{
+                return (<div>need to be signed in</div>)
+            }
+        }
+
+    }
 
 }
 

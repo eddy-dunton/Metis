@@ -250,9 +250,9 @@ class App extends React.Component {
     }
 
     failedRequest(){
-        this.setState({ token:'' , username: '', loggedIn: false});
         this.cookies.remove('username')
         this.cookies.remove('token')
+        this.setState({ token:'' , username: '', loggedIn: false});
     }
 
     async login(e) {
@@ -260,11 +260,8 @@ class App extends React.Component {
     }
 
     upload() {
-        if (this.state.profile){
-            this.setState({ showUpload: !this.state.showUpload });
-        } else {
-            this.getProfileInfo()
-        }
+        this.getProfileInfo()
+        this.setState({ showUpload: !this.state.showUpload });
     }
 
     async publishFile(event){
@@ -283,7 +280,15 @@ class App extends React.Component {
             method:"POST",
             body: formData,
         })
-        console.log(await response.json())
+        let resjson = await response.json()
+        if (resjson.error){
+            document.getElementById("error"+no).innerHTML = resjson.error
+        } else {
+            let temp=this.state.files;
+            temp.splice(no,1);
+            this.setState({files:temp})
+            this.upload();
+        }
     }
 
     fileUploaded(files) {
@@ -341,6 +346,7 @@ class App extends React.Component {
                                         </select>
                                     </div>
                                     <textarea id={"description"+i} type="textarea" className="file-upload-description" placeholder="Description... (required)"/>
+                                    <div id={"error"+i}></div>
                                     <button id={"button"+i} onClick={this.publishFile}>Publish</button>
                                 </div>
                                 <img src={cross} alt="Close" className="file-upload-close clickable hover" onClick={() => {let temp=this.state.files;
@@ -355,7 +361,7 @@ class App extends React.Component {
                 <Switch>
                     <Route path="/reset-password" component={Reset} />
                     <Route path="/profile/:username" render={(data) => <Profile token={this.state.token} failCallback={this.failedRequest} myusername={this.state.username} username={data.match.params.username} loggedIn={this.state.loggedIn}/>}/>
-                    <Route path="/note/:noteid" component={NotePreview} />
+                    <Route path="/note/:noteid" render={(data) => <NotePreview id={data} token={this.state.token} failCallback={this.failedRequest}/>} />
                     <Route path="/" render={(data) => this.state.loggedIn ? <Home/> : <NotLoggedInPage loginCallback = {this.login} signInTabs = {this.signInTabs} currentTab = {this.currentTab} />} />
                 </Switch>
             </div>

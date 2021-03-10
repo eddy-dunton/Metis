@@ -23,9 +23,19 @@ class NotLoggedInPage extends React.Component {
     this.setCurrentTab = this.setCurrentTab.bind(this);
   }
 
-  setCurrentTab(cur) {
-      this.setState({ currentTab:cur });
-  }
+    setCurrentTab(cur) {
+        this.inputs = [document.getElementById("username"),document.getElementById("password")]
+        if (document.getElementById("email")){
+            this.inputs.push(document.getElementById("email"))
+        }
+        this.inputs.forEach(x => {
+            x.value = ""
+            x.nextElementSibling.innerHTML = "";
+            x.classList.remove("input-success")
+            x.classList.remove("input-error")
+        })
+        this.setState({ currentTab:cur });
+    }
 
   render() {
     return(

@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Alegreya&family=Josefin+Sans&family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap');
+
+
+.home {
+  padding: 2% 0;
+}
+
+.home > div >h1 {
+  font-family: 'Josefin Sans', sans-serif;
+  font-weight: 500;
+  font-size: 32px;
+  line-height: 32px;
+  color: #FFFFFF;
+  margin:10px;
+}
+
+.note-container {
+  margin: 10px;
+  max-height:80px;
+  width: 95%;
+  display: inline-block;
+
+}
+
+.top-left{
+  background-color: #555555 ;
+  border-radius: 15px;
+  display: inline-block;
+  margin-right: 0.5%;
+  margin-left: 10%;
+  width:39.5%;
+  height:400px;
+  margin-bottom: 0.5%;
+  overflow: auto;
+
+}
+
+.top-right{
+  background-color: #555555 ;
+  display: inline-block;
+  border-radius: 15px;
+  margin-right: 10%;
+  margin-left: 0.5%;
+  width: 39.5%;
+  height:400px;
+  text-align: right;
+  overflow: auto;
+  vertical-align: top;
+
+}
+
+.uni-logo {
+  width: 10%;
+  height: width;
+  position: absolute;
+  left: 45%;
+  top: 450px;
+}
+
+.bottom-left{
+  background-color: #555555 ;
+  border-radius: 15px;
+  display: inline-block;
+  margin-right: 0.5%;
+  margin-left: 10%;
+  width:39.5%;
+  height:400px;
+  overflow: auto;
+}
+.bottom-right{
+  background-color: #555555 ;
+  display: inline-block;
+  border-radius: 15px;
+  margin-right: 10%;
+  margin-left: 0.5%;
+  width: 39.5%;
+  height:400px;
+  text-align: right;
+  overflow: auto;
+}
+
+div::-webkit-scrollbar {
+  width:12px;               /* width of the entire scrollbar */
+}
+
+
+div::-webkit-scrollbar-thumb {
+  background: linear-gradient(transparent,#888888) ;   /* color of the scroll thumb */
+  border-radius: 6px;       /* roundness of the scroll thumb */
+}

@@ -30,7 +30,7 @@ class App extends React.Component {
         this.state = {
             token: this.cookies.get('token'),
             username: this.cookies.get('username'),
-            loggedIn: this.cookies.get('token') ? true : false,
+            loggedIn: this.cookies.get('token') ? true : true,
             showLogin: false,
             showUpload: false,
             currentTab:'signin',
@@ -329,8 +329,8 @@ class App extends React.Component {
                             <section key={i} className="file-upload-section">
                                 <div className="file-upload-header">
                                     <img alt="pdf" src={pdf}/>
-                                    <div className="file-upload-filename">{file.name}</div> 
-                                </div> 
+                                    <div className="file-upload-filename">{file.name}</div>
+                                </div>
                                 <div className="file-upload-inputs">
                                     <div className="file-upload-title-module">
                                         <input id={"title"+i} className="file-upload-title" placeholder="Title... (required)"/>
@@ -347,9 +347,9 @@ class App extends React.Component {
                                     temp.splice(i,1);
                                     this.setState({files:temp})
                                 }}/>
-                            </section> 
+                            </section>
                         ))}
-                    </div> 
+                    </div>
                 </Modal>
                 {/* part of react router handles different paths given to it */}
                 <Switch>

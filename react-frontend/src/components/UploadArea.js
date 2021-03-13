@@ -36,6 +36,8 @@ class UploadArea extends React.Component {
         //when it is click opent he file browser and give the files to the handler 
         document.getElementById("browse").click()
         this.setState({drag: false})
+    }
+    onChange = (e) =>{
         this.props.handleDrop(e.target.files)
     }
     componentDidMount() {
@@ -58,7 +60,7 @@ class UploadArea extends React.Component {
     render() {
         return (
             <div ref={this.dropRef} onClick={this.handleClick} className={`uploadArea clickable ${this.state.drag ? "dragging" : ""}`}>
-                <input onChange={this.handleClick} type="file" id="browse" name="fileupload" style={{display: "none"}}  multiple/>
+                <input onInput={this.onChange} type="file" id="browse" name="fileupload" style={{display: "none"}}  multiple/>
                 <div className="uploadAreaText">
                     Drag and drop {this.props.filetype ? this.props.filetype : "PDF"} or click to browse
                 </div>

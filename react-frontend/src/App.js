@@ -286,6 +286,9 @@ class App extends React.Component {
         } else {
             let temp=this.state.files;
             temp.splice(no,1);
+            if (!temp){
+                temp = []
+            }
             this.setState({files:temp})
             this.upload();
         }
@@ -349,9 +352,15 @@ class App extends React.Component {
                                     <div id={"error"+i}></div>
                                     <button id={"button"+i} onClick={this.publishFile}>Publish</button>
                                 </div>
-                                <img src={cross} alt="Close" className="file-upload-close clickable hover" onClick={() => {let temp=this.state.files;
+                                <img src={cross} alt="Close" className="file-upload-close clickable hover" onClick={() => {
+                                    let temp=this.state.files;
                                     temp.splice(i,1);
+                                    if (!temp){
+                                        temp = []
+                                    }
+                                    console.log(temp)
                                     this.setState({files:temp})
+
                                 }}/>
                             </section> 
                         ))}

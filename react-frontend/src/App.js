@@ -30,7 +30,7 @@ class App extends React.Component {
         this.state = {
             token: this.cookies.get('token'),
             username: this.cookies.get('username'),
-            loggedIn: this.cookies.get('token') ? true : true,
+            loggedIn: this.cookies.get('token') ? true : false,
             showLogin: false,
             showUpload: false,
             currentTab:'signin',

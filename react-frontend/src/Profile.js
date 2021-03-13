@@ -26,8 +26,12 @@ class Profile extends React.Component {
         let resdata = await response.json();
         resdata.username = username;
         if (resdata.error){
-            this.failCallback()
-            this.setState({ profile: null,loading: false,loggedIn:false})
+            if(resdata.error == "No user found"){
+                this.setState({ profile: resdata,loading: false,loggedIn:true})
+            } else {
+                this.failCallback()
+                this.setState({ profile: null,loading: false,loggedIn:false})
+            }
         } else {
             this.setState({ profile: resdata,loading: false,loggedIn:true})
         }
@@ -66,7 +70,7 @@ class Profile extends React.Component {
                 {this.state.loggedIn ? (this.state.loading || !this.state.profile) ?
                         (
                     "Loading..."
-                ) : (
+                        ) :  (this.state.profile.error) ? ("no user " + this.props.username + " exists") : (
                     <>
                         <div className="profile-content">
                             <img className="profile-content-picture" alt="profile img" src={this.state.profile.picture}/>
@@ -118,7 +122,7 @@ class Profile extends React.Component {
                                             return (
                                                 <Note key={i} title={note.Title} id={note.File} unitcode={note.UnitCode} pens={note.Pens} downloads={note.Downloads} description={note.Description}/>
                                             )}
-                                     }
+                                    }
                                 })}
                             </div>
                         </div>

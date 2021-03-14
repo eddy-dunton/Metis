@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import logo from './images/logo.svg';
 import upload from './images/upload.svg';
 import search from './images/search.svg';
@@ -13,12 +13,15 @@ class Navbar extends React.Component {
         this.state = {
             loading: true,
             profile: null,
+            searchTerm: "",
             loggedIn:props.loggedIn,
         };
         this.loginCallback = props.loginCallback;
         this.failCallback = props.failCallback;
         this.uploadCallback = props.uploadCallback;
+        this.searchCallback = props.searchCallback;
         this.getProfileInfo = this.getProfileInfo.bind(this);
+        this.search = this.search.bind(this);
     }
     async getProfileInfo(username, token) {
         let response = await fetch("/getUserPreview/"+username+"&token="+token);
@@ -30,6 +33,7 @@ class Navbar extends React.Component {
             this.setState({ profile: null,loading: true,loggedIn:false})
         }
     }
+
     componentDidMount() {
         if (this.props.loggedIn){
             this.setState({ loggedIn: this.props.loggedIn })
@@ -44,6 +48,11 @@ class Navbar extends React.Component {
             }
         }
     }
+    search(event) {
+      this.setState({searchTerm: event.target.value});
+      this.searchCallback(event);
+    }
+
     render() {
         return (
             <div className="navbar">
@@ -52,8 +61,10 @@ class Navbar extends React.Component {
                     <div>metis</div>
                 </Link>
                 <div className="navbar-search">
-                    <img src={search} alt="Search button" className="clickable"/>
-                    <input placeholder="Search..."/>
+                      <Link to={"/search/"+this.state.searchTerm}>
+                      <img src={search} alt="Search button" className="clickable"  />
+                      </Link>
+                    <input id="searchInput"  onChange={event => {this.search(event)}} placeholder="Search..."/>
                 </div>
                 {this.state.loggedIn ? (
                     <div className="navbar-upload hover clickable" onClick={this.uploadCallback}>
@@ -62,7 +73,7 @@ class Navbar extends React.Component {
                 ) : (<></>)
                 }
                 {/* if its loading the profile say its loading, if not logged in show the login button, if not loading and logged in show profile */}
-                {this.state.loggedIn ? (this.state.loading || !this.state.profile) ? 
+                {this.state.loggedIn ? (this.state.loading || !this.state.profile) ?
                         (
                             <div className="navbar-profile">Loading...</div>
                         ) : (

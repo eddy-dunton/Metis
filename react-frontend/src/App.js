@@ -21,6 +21,7 @@ import Profile from './Profile.js';
 import UploadArea from './components/UploadArea.js';
 import NotLoggedInPage from './notLoggedIn.js'
 import NotePreview from './notePreview.js';
+import SearchPage from './SearchPage.js';
 
 
 class App extends React.Component {
@@ -356,6 +357,7 @@ class App extends React.Component {
                     <Route path="/reset-password" component={Reset} />
                     <Route path="/profile/:username" render={(data) => <Profile token={this.state.token} failCallback={this.failedRequest} myusername={this.state.username} username={data.match.params.username} loggedIn={this.state.loggedIn}/>}/>
                     <Route path="/note/:noteid" component={NotePreview} />
+                    <Route path ="/search" component = {SearchPage} />
                     <Route path="/" render={(data) => this.state.loggedIn ? <Home/> : <NotLoggedInPage loginCallback = {this.login} signInTabs = {this.signInTabs} currentTab = {this.currentTab} />} />
                 </Switch>
             </div>

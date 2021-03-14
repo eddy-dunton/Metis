@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Alegreya&family=Josefin+Sans&family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap');
+
+.post-results {
+  margin-top: 50px;
+  display: block;
+}
+
+.post-result-container {
+  margin: 30px 0px;
+}
+.sidebar {
+  display:inline-block;
+  width: 20%;
+  height: 100%;
+  overflow-x:auto;
+  background-color: #222222;
+  padding: 5px
+}
+
+.sidebar > h1 {
+  font-family: 'Josefin Sans', sans-serif;
+  font-weight: 500;
+  line-height: 32px;
+  font-size: 32px;
+  color : #FFFFFF;
+  margin: 25px 0px;
+}
+
+.results {
+  display: inline-block;
+  overflow-x: auto;
+  align-items: center;
+  justify-content: center;
+  vertical-align: top;
+  width: 70%;
+  padding: 0px 50px;
+}
+
+
+
+
+
+
+
+
+
+::-webkit-scrollbar {
+  width:12px;               /* width of the entire scrollbar */
+}
+
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(transparent,#888888) ;   /* color of the scroll thumb */
+  border-radius: 6px;       /* roundness of the scroll thumb */
+}

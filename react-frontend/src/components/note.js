@@ -22,11 +22,16 @@ class UploadArea extends React.Component {
                             <img className="note-preview-pdf" alt="PDF" src={pdf}/>
                             <Link to={"/note/"+this.props.id} className="note-preview-name">{this.props.title}</Link>
                         </div>
-                        <div className="note-preview-right">
+
+                        { this.props.hideRight ?  (<></>) :
+                          (<div className="note-preview-right">
                             <div className="note-preview-module">{this.props.unitcode}</div>
                             <img width="32px" alt="choice dots" src={dots}/>
                             <img width="32px" alt="open note" className="clickable" onClick={this.tglDesc} style={ this.state.showDesc ?{transform: "rotate(180deg)"}:{}} src={arrow}/>
-                        </div>
+                          </div>)
+                        }
+
+
                     </div>
 
                     { this.state.showDesc ? (

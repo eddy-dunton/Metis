@@ -29,6 +29,7 @@
   text-align: center;
   color: #FFFFFF;
   padding: 0px;
+  display: block;
 }
 
 .comment-container > img {

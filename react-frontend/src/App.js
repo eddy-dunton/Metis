@@ -257,9 +257,9 @@ class App extends React.Component {
     }
 
     failedRequest(){
-        this.setState({ token:'' , username: '', loggedIn: false});
         this.cookies.remove('username')
         this.cookies.remove('token')
+        this.setState({ token:'' , username: '', loggedIn: false});
     }
 
     async login(e) {
@@ -267,11 +267,8 @@ class App extends React.Component {
     }
 
     upload() {
-        if (this.state.profile){
-            this.setState({ showUpload: !this.state.showUpload });
-        } else {
-            this.getProfileInfo()
-        }
+        this.getProfileInfo()
+        this.setState({ showUpload: !this.state.showUpload });
     }
 
 
@@ -292,7 +289,18 @@ class App extends React.Component {
             method:"POST",
             body: formData,
         })
-        console.log(await response.json())
+        let resjson = await response.json()
+        if (resjson.error){
+            document.getElementById("error"+no).innerHTML = resjson.error
+        } else {
+            let temp=this.state.files;
+            temp.splice(no,1);
+            if (!temp){
+                temp = []
+            }
+            this.setState({files:temp})
+            this.upload();
+        }
     }
 
     fileUploaded(files) {
@@ -350,11 +358,18 @@ class App extends React.Component {
                                         </select>
                                     </div>
                                     <textarea id={"description"+i} type="textarea" className="file-upload-description" placeholder="Description... (required)"/>
+                                    <div id={"error"+i}></div>
                                     <button id={"button"+i} onClick={this.publishFile}>Publish</button>
                                 </div>
-                                <img src={cross} alt="Close" className="file-upload-close clickable hover" onClick={() => {let temp=this.state.files;
+                                <img src={cross} alt="Close" className="file-upload-close clickable hover" onClick={() => {
+                                    let temp=this.state.files;
                                     temp.splice(i,1);
+                                    if (!temp){
+                                        temp = []
+                                    }
+                                    console.log(temp)
                                     this.setState({files:temp})
+
                                 }}/>
                             </section>
                         ))}

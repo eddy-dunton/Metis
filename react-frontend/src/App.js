@@ -21,6 +21,7 @@ import Profile from './Profile.js';
 import UploadArea from './components/UploadArea.js';
 import NotLoggedInPage from './notLoggedIn.js'
 import NotePreview from './notePreview.js';
+import SearchPage from './SearchPage.js';
 
 
 class App extends React.Component {
@@ -35,6 +36,7 @@ class App extends React.Component {
             showUpload: false,
             currentTab:'signin',
             profile:null,
+            searchTerm:"",
             files:[]
         };
 
@@ -44,6 +46,7 @@ class App extends React.Component {
         this.fileUploaded = this.fileUploaded.bind(this);
         this.setCurrentTab = this.setCurrentTab.bind(this);
         this.failedRequest = this.failedRequest.bind(this);
+        this.search = this.search.bind(this);
         this.signin = this.signin.bind(this);
         this.hashPassword = this.hashPassword.bind(this);
         this.createAccount = this.createAccount.bind(this);
@@ -202,6 +205,10 @@ class App extends React.Component {
         }
     }
 
+    search(event){
+      this.setState({searchTerm: event.target.value});
+    }
+
     async signin(e){
         let user = {
             username : document.getElementById("username").value,
@@ -264,6 +271,8 @@ class App extends React.Component {
         this.setState({ showUpload: !this.state.showUpload });
     }
 
+
+
     async publishFile(event){
         let no = event.target.id.split("button")[1]
         let title =document.getElementById("title"+no).value
@@ -311,7 +320,7 @@ class App extends React.Component {
     render() {
         return (
             <div className="app">
-                <Navbar token={this.state.token} failCallback={this.failedRequest} username={this.state.username} loggedIn={this.state.loggedIn} uploadCallback={this.upload} loginCallback={this.login} />
+                <Navbar token={this.state.token} failCallback={this.failedRequest} username={this.state.username} loggedIn={this.state.loggedIn} uploadCallback={this.upload} loginCallback={this.login} searchCallback ={this.search} />
                 {/* modal is initially hidden and shown when this.login is called */}
                 <Modal show={this.state.showLogin} handleClose={this.login}>
                     {/* sets up the tab buttons */}
@@ -337,8 +346,8 @@ class App extends React.Component {
                             <section key={i} className="file-upload-section">
                                 <div className="file-upload-header">
                                     <img alt="pdf" src={pdf}/>
-                                    <div className="file-upload-filename">{file.name}</div> 
-                                </div> 
+                                    <div className="file-upload-filename">{file.name}</div>
+                                </div>
                                 <div className="file-upload-inputs">
                                     <div className="file-upload-title-module">
                                         <input id={"title"+i} className="file-upload-title" placeholder="Title... (required)"/>
@@ -362,16 +371,17 @@ class App extends React.Component {
                                     this.setState({files:temp})
 
                                 }}/>
-                            </section> 
+                            </section>
                         ))}
-                    </div> 
+                    </div>
                 </Modal>
                 {/* part of react router handles different paths given to it */}
                 <Switch>
                     <Route path="/reset-password" component={Reset} />
                     <Route path="/profile/:username" render={(data) => <Profile token={this.state.token} failCallback={this.failedRequest} myusername={this.state.username} username={data.match.params.username} loggedIn={this.state.loggedIn}/>}/>
-                    <Route path="/note/:noteid" render={(data) => <NotePreview path={data.match.params.noteid} token={this.state.token} failCallback={this.failedRequest}/>} />
-                    <Route path="/" render={(data) => this.state.loggedIn ? <Home/> : <NotLoggedInPage loginModalShow={this.login} setTab={this.setCurrentTab} />} />
+                    <Route path="/note/:noteid" component={NotePreview} />
+                    <Route path ="/search/:searchid" render={(data) => <SearchPage token={this.state.token} failCallback= {this.failedRequest} username={this.state.username}  loggedIn={this.state.loggedIn} searchTerm = {this.state.searchTerm}/>} />
+                    <Route path="/" render={(data) => this.state.loggedIn ? <Home/> : <NotLoggedInPage loginCallback = {this.login} signInTabs = {this.signInTabs} currentTab = {this.currentTab} />} />
                 </Switch>
             </div>
         );

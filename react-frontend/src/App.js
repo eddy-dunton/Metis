@@ -206,7 +206,7 @@ class App extends React.Component {
     }
 
     search(event){
-      this.setState({searchTerm: event.target.value});
+        this.setState({searchTerm: event.target.value});
     }
 
     async signin(e){
@@ -246,14 +246,14 @@ class App extends React.Component {
     }
 
     async getProfileInfo(){
-            let response = await fetch("/getUserInfo/"+this.state.username+"&token="+this.state.token);
-            let resdata = await response.json();
-            if (resdata.error){
-                this.failedRequest()
-                this.setState({ profile: null })
-            } else {
-                this.setState({ profile: resdata})
-            }
+        let response = await fetch("/getUserInfo/"+this.state.username+"&token="+this.state.token);
+        let resdata = await response.json();
+        if (resdata.error){
+            this.failedRequest()
+            this.setState({ profile: null })
+        } else {
+            this.setState({ profile: resdata})
+        }
     }
 
     failedRequest(){
@@ -327,11 +327,11 @@ class App extends React.Component {
                     <div className="tabs">
                         {this.signInTabs.map((tab, i) => (
                             <button
-                                key={i}
-                                onClick={() => this.setCurrentTab(tab.name)}
-                                className={`clickable ${(tab.name === this.state.currentTab) ? 'active' : ''}`}>
-                                {tab.label}
-                            </button>
+                            key={i}
+                            onClick={() => this.setCurrentTab(tab.name)}
+                            className={`clickable ${(tab.name === this.state.currentTab) ? 'active' : ''}`}>
+                            {tab.label}
+                        </button>
                         ))}
                     </div>
                     {/* line below draws signin/create account based on whats picked */}
@@ -355,35 +355,35 @@ class App extends React.Component {
                                             {this.state.profile.units.map((unit,i)=>{return (
                                                 <option key={i} value={unit.UnitCode}>{unit.UnitCode}</option>
                                             )})}
-                                        </select>
+                                            </select>
+                                        </div>
+                                        <textarea id={"description"+i} type="textarea" className="file-upload-description" placeholder="Description... (required)"/>
+                                        <div id={"error"+i}></div>
+                                        <button id={"button"+i} onClick={this.publishFile}>Publish</button>
                                     </div>
-                                    <textarea id={"description"+i} type="textarea" className="file-upload-description" placeholder="Description... (required)"/>
-                                    <div id={"error"+i}></div>
-                                    <button id={"button"+i} onClick={this.publishFile}>Publish</button>
-                                </div>
-                                <img src={cross} alt="Close" className="file-upload-close clickable hover" onClick={() => {
-                                    let temp=this.state.files;
-                                    temp.splice(i,1);
-                                    if (!temp){
-                                        temp = []
-                                    }
-                                    console.log(temp)
-                                    this.setState({files:temp})
+                                    <img src={cross} alt="Close" className="file-upload-close clickable hover" onClick={() => {
+                                        let temp=this.state.files;
+                                        temp.splice(i,1);
+                                        if (!temp){
+                                            temp = []
+                                        }
+                                        console.log(temp)
+                                        this.setState({files:temp})
 
-                                }}/>
-                            </section>
+                                    }}/>
+                                </section>
                         ))}
+                            </div>
+                        </Modal>
+                        {/* part of react router handles different paths given to it */}
+                        <Switch>
+                            <Route path="/reset-password" component={Reset} />
+                            <Route path="/profile/:username" render={(data) => <Profile token={this.state.token} failCallback={this.failedRequest} myusername={this.state.username} username={data.match.params.username} loggedIn={this.state.loggedIn}/>}/>
+                            <Route path ="/note/:noteid" render={(data) => <NotePreview token={this.state.token} path={data.match.params.noteid} failCallback= {this.failedRequest} />} />
+                            <Route path ="/search/:searchid" render={(data) => <SearchPage token={this.state.token} failCallback= {this.failedRequest} username={this.state.username}  loggedIn={this.state.loggedIn} searchTerm = {data.match.params.searchid}/>} />
+                            <Route path="/" render={(data) => this.state.loggedIn ? <Home/> : <NotLoggedInPage loginCallback = {this.login} signInTabs = {this.signInTabs} currentTab = {this.currentTab} />} />
+                        </Switch>
                     </div>
-                </Modal>
-                {/* part of react router handles different paths given to it */}
-                <Switch>
-                    <Route path="/reset-password" component={Reset} />
-                    <Route path="/profile/:username" render={(data) => <Profile token={this.state.token} failCallback={this.failedRequest} myusername={this.state.username} username={data.match.params.username} loggedIn={this.state.loggedIn}/>}/>
-                    <Route path ="/note/:noteid" render={(data) => <NotePreview token={this.state.token} path={data.match.params.noteid} failCallback= {this.failedRequest} />} />
-                    <Route path ="/search/:searchid" render={(data) => <SearchPage token={this.state.token} failCallback= {this.failedRequest} username={this.state.username}  loggedIn={this.state.loggedIn} searchTerm = {data.match.params.searchid}/>} />
-                    <Route path="/" render={(data) => this.state.loggedIn ? <Home/> : <NotLoggedInPage loginCallback = {this.login} signInTabs = {this.signInTabs} currentTab = {this.currentTab} />} />
-                </Switch>
-            </div>
         );
 
     }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import logo from './images/logo.svg';
 import upload from './images/upload.svg';
 import search from './images/search.svg';
@@ -13,14 +13,18 @@ class Navbar extends React.Component {
         this.state = {
             loading: true,
             profile: null,
+            searchTerm: "",
             loggedIn:props.loggedIn,
             menuShown:false,
         };
         this.loginCallback = props.loginCallback;
         this.failCallback = props.failCallback;
         this.uploadCallback = props.uploadCallback;
+        this.searchCallback = props.searchCallback;
         this.getProfileInfo = this.getProfileInfo.bind(this);
+        this.search = this.search.bind(this);
         this.showMenu = this.showMenu.bind(this);
+
     }
 
     showMenu(){
@@ -38,6 +42,7 @@ class Navbar extends React.Component {
             this.setState({ profile: null,loading: true,loggedIn:false})
         }
     }
+
     componentDidMount() {
         this.setState({ loggedIn: this.props.loggedIn })
         if (this.props.loggedIn){
@@ -52,18 +57,26 @@ class Navbar extends React.Component {
             }
         }
     }
+    search(event) {
+      this.setState({searchTerm: event.target.value});
+      this.searchCallback(event);
+    }
+
     render() {
         return (
+
             <>
                 <div className="navbar">
                     <Link to="/" className="navbar-logo clickable">
                         <img src={logo} alt="Metis Logo" />
                         <div>metis</div>
                     </Link>
-                    <div className="navbar-search">
-                        <img src={search} alt="Search button" className="clickable"/>
-                        <input placeholder="Search..."/>
-                    </div>
+                <div className="navbar-search">
+                      <Link to={"/search/"+this.state.searchTerm}>
+                      <img src={search} alt="Search button" className="clickable"  />
+                      </Link>
+                    <input id="searchInput"  onChange={event => {this.search(event)}} placeholder="Search..."/>
+                </div>
                     {this.state.loggedIn ? (
                         <div className="navbar-upload hover clickable" onClick={this.uploadCallback}>
                             <img src={upload} alt="Upload button"/>

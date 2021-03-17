@@ -17,7 +17,7 @@ font-family: 'Roboto', sans-serif;
 }
 
 .hover {
-    transition: box-shadow 0.2s, transform 0.3s; 
+    transition: box-shadow 0.2s, transform 0.3s;
     border-radius:8px;
     padding:15px;
     transform: scale(0.99);
@@ -45,11 +45,11 @@ body {
 
     background: rgba(0,0,0,0.2);
 
-    padding:0 15px; 
+    padding:0 15px;
 }
 
 .navbar > * {
-    margin:0 15px;  
+    margin:0 15px;
 }
 .navbar-logo {
     display:flex;
@@ -281,7 +281,7 @@ body {
 }
 
 .file-upload-header > *{
-    margin-right:4px; 
+    margin-right:4px;
 }
 
 .file-upload-inputs{
@@ -400,12 +400,12 @@ body {
     justify-content: center;
     align-items: center;
     font-size:20px;
-    transition: border 0.2s, background 0.2s, transform 0.2s; 
+    transition: border 0.2s, background 0.2s, transform 0.2s;
 }
 
 .uploadAreaText{
     color:#444444;
-    text-align:center; 
+    text-align:center;
     z-index:-1;
     font-family: 'Roboto', sans-serif;
 }
@@ -500,7 +500,102 @@ body {
 }
 .note-preview-name{
     font-family: 'Josefin Sans', sans-serif;
-    overflow: hidden; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size:32px;
+}
+.note-preview-left{
+    display:flex;
+    flex-direction:row;
+}
+.note-preview-right{
+    display:flex;
+    flex-direction:row;
+}
+.note-preview-module{
+    font-family: 'Roboto', sans-serif;
+}
+
+.note-preview-description{
+    border-radius:0px 0px 15px 15px;
+    background:#E5E5E5;
+    font-family: 'Alegreya', serif;
+    font-size:24px;
+    margin-bottom:16px;
+    padding:8px;
+    color:#222222;
+}
+
+.note-preview-under{
+    display:flex;
+    flex-direction:row;
+    justify-content:flex-end;
+}
+
+.note-preview-under > * {
+    padding:4px;
+    margin-left:8px;
+    border-radius:5px;
+    font-size:16px;
+    background: #5C5C5C;
+    color:#FFFFFF;
+    font-family: 'Roboto', sans-serif;
+}
+
+.course-preview-unitcode{
+  background-color: #77C6FF;
+  border-radius:10px;
+  height: 25px;
+  vertical-align: middle;
+  padding: 3px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  position:relative;
+  top: 20%;
+}
+
+.course-preview-unitcode > p{
+  margin: 0px;
+  color: #FFFFFF;
+  font-family: 'Roboto', sans-serif;
+}
+.course-preview-name{
+    font-family: 'Josefin Sans', sans-serif;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size:16px;
+}
+
+.note-preview{}
+.note-preview-content{
+    background: #fff;
+    border-radius:15px;
+    box-shadow: 2px 2px 0 4px rgba(255,255,255,0.25);
+    margin: 16px 0px;
+}
+
+.note-preview-header{
+    text-align: center;
+    padding:16px;
+    display:flex;
+    flex-direction:row;
+    justify-content: space-between;
+    line-height: 48px;
+}
+
+.note-preview-header >* >  *{
+    display:flex;
+    align-items:center;
+    margin: 0px 4px;
+}
+
+.note-preview-pdf{
+
+}
+.note-preview-name{
+    font-family: 'Josefin Sans', sans-serif;
+    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     font-size:32px;
@@ -547,11 +642,11 @@ body {
     .navbar {
         flex-wrap: wrap;
         height:120px;
-        padding:0 5px; 
+        padding:0 5px;
     }
 
     .navbar > * {
-        margin:0 0px; 
+        margin:0 0px;
     }
     .navbar-logo{
         order:2;

@@ -77,7 +77,7 @@ class Profile extends React.Component {
                             <div className="profile-content-username">{this.state.profile.username}</div>
                             <div className="profile-content-uni">{this.state.profile.Name}</div>
                             <div>{this.state.profile.Biography}</div>
-                            {   
+                            {
                                 this.state.possUnits.map((unit,i) => {return (
                                     <label>
                                         <input type="checkbox" value={unit.UnitCode} onChange={(event) => {

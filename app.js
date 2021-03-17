@@ -579,6 +579,37 @@ app.post("/createComment", async (req, res) => {
   });
 });
 
+const SQL_GETHOME = db.prepare(`
+  SELECT DISTINCT File, Title, Pens, Downloads, Description, Unit.UnitCode
+  FROM Post
+    JOIN Unit
+      ON Unit.UnitId = Post.UnitId
+    JOIN UnitEnrollment
+      ON UnitEnrollment.UnitId = Post.UnitId
+    JOIN User
+      ON User.UserId = UnitEnrollment.UserId
+      AND User.Username = ?
+  ORDER BY PostId DESC
+  LIMIT 5`);
+
+app.get("/getHome/:username&token=:token", async (req, res) => {
+  const username = req.params.username;
+  const token = req.params.token;
+
+  if (username === undefined || !REGEX_USERNAME.test(username))
+    return res.status(400).send({error:"No / Invalid username"});
+
+  if (!session.checkToken(username, token))
+    return res.status(400).send({error:"Invalid login"});
+
+  SQL_GETHOME.all(username, async (err, posts) => {
+    if (posts === undefined)
+      return res.status(500).send({error:"SQL_GETHOME Failed, this shouldn't happen"});
+    
+    res.status(200).send({posts});
+  });  
+});
+
 //Make sure this stay at the bottom
 app.get('*', (req,res) =>{
   res.sendFile(__dirname+'/react-frontend/build/index.html');

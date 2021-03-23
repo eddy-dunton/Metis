@@ -30,7 +30,7 @@
   margin-right: 0.5%;
   margin-left: 10%;
   width:39.5%;
-  height:400px;
+  height:900px;
   margin-bottom: 0.5%;
   overflow: auto;
 
@@ -43,7 +43,7 @@
   margin-right: 10%;
   margin-left: 0.5%;
   width: 39.5%;
-  height:400px;
+  height:900px;
   text-align: right;
   overflow: auto;
   vertical-align: top;
@@ -56,28 +56,6 @@
   position: absolute;
   left: 45%;
   top: 450px;
-}
-
-.bottom-left{
-  background-color: #555555 ;
-  border-radius: 15px;
-  display: inline-block;
-  margin-right: 0.5%;
-  margin-left: 10%;
-  width:39.5%;
-  height:400px;
-  overflow: auto;
-}
-.bottom-right{
-  background-color: #555555 ;
-  display: inline-block;
-  border-radius: 15px;
-  margin-right: 10%;
-  margin-left: 0.5%;
-  width: 39.5%;
-  height:400px;
-  text-align: right;
-  overflow: auto;
 }
 
 div::-webkit-scrollbar {

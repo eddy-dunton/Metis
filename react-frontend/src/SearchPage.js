@@ -44,8 +44,9 @@ class SearchPage extends React.Component {
         console.log(resdata)
         if(resdata.error){
             this.failCallback();
+        } else{
+            this.setState({searchResults:resdata});
         }
-        this.setState({searchResults:resdata});
     }
 
 
@@ -58,12 +59,6 @@ class SearchPage extends React.Component {
                         <Course id={2495}  unitcode ="CM20254" courseName="Data Structures" />
                         <Course id={2495}  unitcode ="CM20217" courseName="Foundations Of Computation" />
                         <Course id={2495}  unitcode ="CM20219" courseName="Fundamentals Of Visual Computing" />
-                    </div>
-                    <h1>Recently viewed</h1>
-                    <div className = "recently-viewed-container">
-                        <Note key={12} title="John's best notes" id={2495} unitcode="CM20225" pens={12} downloads={14} description="Test note 1" hideUnder ={true} hideRight={true}/>
-                        <Note key={12} title="Look here x" id={2495} unitcode="CM20225" pens={12} downloads={14} description="Test note 1" hideUnder ={true} hideRight={true}/>
-                        <Note key={12} title="Computers" id={2495} unitcode="CM20225" pens={12} downloads={14} description="Test note 1" hideUnder ={true} hideRight={true}/>
                     </div>
                     <h1>Your posts</h1>
                     <div className = "your-posts-container">
@@ -81,6 +76,7 @@ class SearchPage extends React.Component {
                         <div className ="bc-item bc-label">"Test Note"</div>
                     </div>
                     <div className="post-results">
+                        {console.log(this.state.searchResults)}
                         {
                             this.state.searchResults ==null ? (<p>Search Failed</p>)
                                 : this.state.searchResults.length == 0 ? (<p>No results</p>) : (
@@ -97,7 +93,6 @@ class SearchPage extends React.Component {
                         }
                                         </div>
                                     </div>
-
                                 </div>
         );
     }

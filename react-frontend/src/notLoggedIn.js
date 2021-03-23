@@ -27,12 +27,12 @@ class NotLoggedInPage extends React.Component {
         },{ 
             title:"All Your Courses In One Place!",
             text:"The Metis community have provided notes on a vast array of topics for all courses. After signing up you are automatically shown the relevant notes for your current course content.",
-            otherside:(<img alt="list of notes screenshot" style={{width:"45%"}} src={SUPic1}/>),
+            otherside:(<img alt="list of notes screenshot" style={{width:"45%",borderRadius:"15px"}} src={SUPic1}/>),
             color:"#7e7474"
         },{ 
             title:"Join The Metis Community Today!",
             text:"Metis is a powerful and completely free revision tool that anyone can use. Just sign up using a valid university email address and get browsing and uploading notes!",
-            otherside:(<img alt="list of notes screenshot" style={{width:"45%"}} src={SUPic2}/>),
+            otherside:(<img alt="list of notes screenshot" style={{width:"45%",borderRadius:"15px"}} src={SUPic2}/>),
             color:"#c4b6b6"
         }]
     }

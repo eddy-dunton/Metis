@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link } from 'react-router-dom'
 
 //https://blog.logrocket.com/react-router-dom-set-up-essential-components-parameterized-routes-505dc93642f1/
 
@@ -54,7 +55,8 @@ class NotePreview extends React.Component {
                     <div className = "profile-preview">
                         <img src={defaultPP} alt="Profile Picture" />
                         <div className = "profile-info">
-                            <h1>Jerry Johnson
+                            <h1><Link style={{textDecoration:"none",color:"inherit"}} to={"/profile/"+this.state.note.File.split("-")[0]}>{this.state.note.File.split("-")[0]}</Link>
+
                             <p className = "inline">·7h</p>
                         </h1>
                         <p>{this.state.note.UnitName}</p>
@@ -88,12 +90,14 @@ class NotePreview extends React.Component {
                 </div>
                 <div className = "comment-preview">
                     <div className = "comment-number">
-                        <p>3 Comments</p>
+                        <p>0 Comments</p>
                     </div>
                     <input  placeholder="Leave a Comment"/>
+                    {/*
                     <Comment author="James Jameson" text = "Nice notes!" profilePicture ={defaultPP} time = "7h" />
                     <Comment author ="Deez Nuts" text = "Oh something came in the mail today? Deez nuts. [pause for laughter]. GOTEEEEMMMM" profilePicture = {defaultPP} time ="5m" />
                     <Comment author="Annoyingly Long Name" text = "hi uwu :3" profilePicture ={defaultPP} time = "2d" />
+                    */}
                 </div>
             </div>
             )
